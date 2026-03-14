@@ -1909,11 +1909,12 @@
         }
 
         function getLevelWeight(levelKey, type) {
-            const items = type === 'demon' ? demons : challenges;
-            const index = items.findIndex(i => i.key === levelKey);
-            if (index === -1) return 0;
-            return Math.round((1000 / (index + 1)) * 100) / 100;
-        }
+    const items = type === 'demon' ? demons : challenges;
+    const item = items.find(i => i.key === levelKey);
+    if (!item) return 0;
+    const weight = parseFloat(item.score);
+    return isNaN(weight) ? 0 : weight;
+}
 
         function approveRecord(recordKey, levelKey, nickname, percent, type, levelName) {
             if (!confirm('Принять этот рекорд? Он будет добавлен в victors и игроку начислены очки.')) return;

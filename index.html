@@ -570,6 +570,58 @@
             font-weight: 700;
         }
 
+        /* Стили для раздела изменений */
+        .changes-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .changes-list {
+            list-style: none;
+            padding: 0;
+        }
+        .changes-item {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(102,252,241,0.2);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .changes-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+        .changes-icon .fa-plus-circle { color: #2ecc71; }
+        .changes-icon .fa-minus-circle { color: #e74c3c; }
+        .changes-icon .fa-arrows-up-down { color: #3498db; }
+        .changes-content {
+            flex: 1;
+        }
+        .changes-date {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .changes-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .changes-text .level-name {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+        .changes-text .position {
+            color: #fff;
+            font-weight: 700;
+        }
+        .changes-text .neighbor {
+            color: #aaa;
+        }
+
         @media (max-width: 768px) {
             .navbar { padding: 0 14px; height: 60px; flex-wrap: nowrap; }
             .logo { font-size: 1.2rem; }
@@ -611,6 +663,7 @@
             .records-grid { grid-template-columns: 1fr; }
             .detail-stats { grid-template-columns: 1fr; }
             .player-stats { flex-direction: column; gap: 20px; }
+            .changes-item { flex-direction: column; gap: 10px; }
         }
 
         @media (max-width: 400px) {
@@ -645,6 +698,7 @@
             </div>
             <button class="nav-item" onclick="openSection('recordsSection')" id="navRecords">Рекорды</button>
             <button class="nav-item" onclick="openSection('rankingsSection')" id="navRankings">Топ игроков</button>
+            <button class="nav-item" onclick="openSection('changesSection')" id="navChanges">Изменения</button>
             <button class="btn-download-nav" onclick="openSection('downloadSection')">
                 <i class="fas fa-download"></i> <span id="navDownloadText">Скачать</span>
             </button>
@@ -682,6 +736,9 @@
         </button>
         <button class="m-btn" onclick="openSection('rankingsSection'); closeBurger();">
             <i class="fas fa-chart-line"></i> Топ игроков
+        </button>
+        <button class="m-btn" onclick="openSection('changesSection'); closeBurger();">
+            <i class="fas fa-history"></i> Изменения
         </button>
         <button class="m-btn green" onclick="openSection('downloadSection'); closeBurger();">
             <i class="fas fa-download"></i> Скачать игру
@@ -795,6 +852,19 @@
                     <!-- будут заполняться динамически -->
                 </tbody>
             </table>
+        </div>
+    </main>
+
+    <!-- Новая секция: Изменения -->
+    <main id="changesSection" class="section-page">
+        <div class="hero-title">
+            <h2 id="changesTitle">ПОСЛЕДНИЕ ИЗМЕНЕНИЯ</h2>
+            <div class="top-50-text">RECENT CHANGES</div>
+        </div>
+        <div class="changes-container">
+            <ul class="changes-list" id="changesList">
+                <!-- будут заполняться динамически -->
+            </ul>
         </div>
     </main>
 
@@ -939,6 +1009,7 @@
 
         const recordsRef = db.ref('recordRequests');
         const playersRef = db.ref('players');
+        const changesRef = db.ref('changes'); // новый узел для изменений
 
         // ================== Переводы ==================
         const translations = {
@@ -947,6 +1018,7 @@
                 navListsText: "Списки",
                 navRecords: "Рекорды",
                 navRankings: "Топ игроков",
+                navChanges: "Изменения",
                 navDownloadText: "Скачать",
                 welcomeTitle: "ALEX GDPS",
                 welcomeDesc: "Окунись в мир самого амбициозного приватного сервера Geometry Dash. Стабильность, уникальные уровни и сильнейшее комьюнити игроков.",
@@ -970,6 +1042,7 @@
                 top50: "TOP 50",
                 recordsTitle: "РЕКОРДЫ ИГРОКОВ",
                 rankingsTitle: "ТОП ИГРОКОВ",
+                changesTitle: "ПОСЛЕДНИЕ ИЗМЕНЕНИЯ",
                 playerProfileTitle: "ПРОФИЛЬ ИГРОКА",
                 submitRecord: "ПОДАТЬ РЕКОРД",
                 recordModalTitle: "ПОДАТЬ РЕКОРД",
@@ -1028,13 +1101,19 @@
                 noPending: "Нет ожидающих рекордов",
                 rank: "Ранг",
                 hardest: "Hardest",
-                unbounded: "Пройденные уровни"
+                unbounded: "Пройденные уровни",
+                changePlace: "placed at #{pos}",
+                changeRemove: "removed from #{pos}",
+                changeMove: "#{oldPos} → #{newPos}",
+                above: "above {name}",
+                below: "below {name}"
             },
             EN: {
                 navHome: "Home",
                 navListsText: "Lists",
                 navRecords: "Records",
                 navRankings: "Player Rankings",
+                navChanges: "Changes",
                 navDownloadText: "Download",
                 welcomeTitle: "ALEX GDPS",
                 welcomeDesc: "Dive into the world of the most ambitious Geometry Dash private server. Stability, unique levels, and the strongest community.",
@@ -1058,6 +1137,7 @@
                 top50: "TOP 50",
                 recordsTitle: "PLAYER RECORDS",
                 rankingsTitle: "PLAYER RANKINGS",
+                changesTitle: "RECENT CHANGES",
                 playerProfileTitle: "PLAYER PROFILE",
                 submitRecord: "SUBMIT RECORD",
                 recordModalTitle: "SUBMIT RECORD",
@@ -1116,7 +1196,12 @@
                 noPending: "No pending records",
                 rank: "Rank",
                 hardest: "Hardest",
-                unbounded: "Unbounded levels"
+                unbounded: "Unbounded levels",
+                changePlace: "placed at #{pos}",
+                changeRemove: "removed from #{pos}",
+                changeMove: "#{oldPos} → #{newPos}",
+                above: "above {name}",
+                below: "below {name}"
             }
         };
 
@@ -1127,6 +1212,7 @@
             document.getElementById('navListsText').innerHTML = `${t.navListsText} <i class="fas fa-caret-down"></i>`;
             document.getElementById('navRecords').innerText = t.navRecords;
             document.getElementById('navRankings').innerText = t.navRankings;
+            document.getElementById('navChanges').innerText = t.navChanges;
             document.getElementById('navDownloadText').innerText = t.navDownloadText;
             document.getElementById('welcomeTitle').innerText = t.welcomeTitle;
             document.getElementById('welcomeDesc').innerText = t.welcomeDesc;
@@ -1145,6 +1231,7 @@
             document.getElementById('searchInput').placeholder = t.searchPlaceholder;
             document.getElementById('recordsTitle').innerText = t.recordsTitle;
             document.getElementById('rankingsTitle').innerText = t.rankingsTitle;
+            document.getElementById('changesTitle').innerText = t.changesTitle;
             document.querySelector('.submit-record-btn').innerHTML = `<i class="fas fa-plus-circle"></i> ${t.submitRecord}`;
             document.getElementById('recordModalTitle').innerText = t.recordModalTitle;
             document.getElementById('radioDemon').innerText = t.radioDemon;
@@ -1158,6 +1245,7 @@
             document.getElementById('submitRecordBtn').innerText = t.submitRecordBtn;
             render();
             loadRankings();
+            loadChanges(); // загрузить изменения
         }
 
         // ================== Инициализация состояния админа ==================
@@ -1202,6 +1290,8 @@
                 loadRecords();
             } else if (id === 'rankingsSection') {
                 loadRankings();
+            } else if (id === 'changesSection') {
+                loadChanges();
             }
         }
 
@@ -1390,10 +1480,16 @@
             if (!isDragDropMode || draggedIndex === -1 || draggedIndex === targetIndex) return;
 
             let items = type === 'demon' ? demons : challenges;
+            const oldIndex = draggedIndex;
+            const newIndex = targetIndex;
+            const levelName = items[oldIndex].name;
+            const oldPos = oldIndex + 1;
+            const newPos = newIndex + 1;
+
             const newItems = [...items];
-            const dragged = newItems[draggedIndex];
-            newItems.splice(draggedIndex, 1);
-            newItems.splice(targetIndex, 0, dragged);
+            const dragged = newItems[oldIndex];
+            newItems.splice(oldIndex, 1);
+            newItems.splice(newIndex, 0, dragged);
 
             const updates = {};
             newItems.forEach((item, idx) => {
@@ -1401,7 +1497,12 @@
                     updates[`/${type}s/${item.key}/order`] = idx;
                 }
             });
-            db.ref().update(updates).then(() => showToast('Порядок обновлён!'));
+
+            db.ref().update(updates).then(() => {
+                showToast('Порядок обновлён!');
+                // Логируем перемещение
+                logChange('move', levelName, oldPos, newPos, type, newItems);
+            });
             draggedIndex = -1;
         }
         function handleDragEnd(e) {
@@ -1417,14 +1518,114 @@
             if (index === -1) return;
             const target = index + dir;
             if (target < 0 || target >= items.length) return;
+
+            const levelName = items[index].name;
+            const oldPos = index + 1;
+            const newPos = target + 1;
+
             const updates = {};
             updates[`/${type}s/${items[index].key}/order`] = target;
             updates[`/${type}s/${items[target].key}/order`] = index;
-            db.ref().update(updates);
+            db.ref().update(updates).then(() => {
+                // Логируем перемещение
+                logChange('move', levelName, oldPos, newPos, type, items); // items ещё старые, но после обновления придут новые
+            });
         }
 
         function deleteItem(key, path) {
-            if (confirm('Удалить элемент?')) db.ref(path + '/' + key).remove();
+            if (!confirm('Удалить элемент?')) return;
+
+            // Определяем тип и имя перед удалением
+            let type, levelName, oldPos;
+            if (path === 'demons') {
+                const item = demons.find(i => i.key === key);
+                if (item) { levelName = item.name; oldPos = demons.findIndex(i => i.key === key) + 1; type = 'demon'; }
+            } else if (path === 'challenges') {
+                const item = challenges.find(i => i.key === key);
+                if (item) { levelName = item.name; oldPos = challenges.findIndex(i => i.key === key) + 1; type = 'challenge'; }
+            }
+
+            db.ref(path + '/' + key).remove().then(() => {
+                if (type && levelName) {
+                    logChange('remove', levelName, oldPos, null, type, []);
+                }
+            });
+        }
+
+        // ================== Логирование изменений ==================
+        function logChange(action, levelName, oldPos, newPos, type, itemsAfter) {
+            // Определяем соседей
+            let above = null, below = null;
+            if (action === 'place' || action === 'move') {
+                const pos = action === 'place' ? newPos : newPos;
+                const list = itemsAfter; // уже отсортированный массив
+                if (pos > 1) above = list[pos - 2]?.name || null; // индекс в массиве = pos-1
+                if (pos < list.length) below = list[pos]?.name || null;
+            } else if (action === 'remove') {
+                // При удалении соседей определить сложно, можно по старому списку, но у нас его нет.
+                // Пропустим или получим из itemsAfter (уже без удалённого) – тогда соседи те, между которыми был.
+                // itemsAfter после удаления, значит на позиции oldPos-1 теперь уровень, который был на oldPos+1.
+                if (oldPos > 1) above = itemsAfter[oldPos - 2]?.name || null; // бывший выше
+                below = itemsAfter[oldPos - 1]?.name || null; // бывший ниже
+            }
+
+            const change = {
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                action: action,
+                levelName: levelName,
+                listType: type,
+                oldPos: oldPos || null,
+                newPos: newPos || null,
+                above: above,
+                below: below
+            };
+            changesRef.push(change);
+        }
+
+        // ================== Загрузка изменений ==================
+        function loadChanges() {
+            changesRef.orderByChild('timestamp').limitToLast(100).once('value', snapshot => {
+                const changes = [];
+                snapshot.forEach(child => {
+                    changes.push({ key: child.key, ...child.val() });
+                });
+                changes.sort((a, b) => b.timestamp - a.timestamp); // от новых к старым
+
+                const container = document.getElementById('changesList');
+                const t = translations[currentLang];
+                container.innerHTML = '';
+                changes.forEach(change => {
+                    const date = new Date(change.timestamp).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
+                    let icon, text;
+                    if (change.action === 'place') {
+                        icon = 'fa-plus-circle';
+                        text = `${change.levelName} ${t.changePlace.replace('{pos}', change.newPos)}`;
+                        if (change.above) text += `, ${t.above.replace('{name}', change.above)}`;
+                        if (change.below) text += `, ${t.below.replace('{name}', change.below)}`;
+                    } else if (change.action === 'remove') {
+                        icon = 'fa-minus-circle';
+                        text = `${change.levelName} ${t.changeRemove.replace('{pos}', change.oldPos)}`;
+                    } else if (change.action === 'move') {
+                        icon = 'fa-arrows-up-down';
+                        text = `${change.levelName} ${t.changeMove.replace('{oldPos}', change.oldPos).replace('{newPos}', change.newPos)}`;
+                        if (change.above) text += `, ${t.above.replace('{name}', change.above)}`;
+                        if (change.below) text += `, ${t.below.replace('{name}', change.below)}`;
+                    }
+                    const item = document.createElement('li');
+                    item.className = 'changes-item';
+                    item.innerHTML = `
+                        <div class="changes-icon"><i class="fas ${icon}"></i></div>
+                        <div class="changes-content">
+                            <div class="changes-date">${date}</div>
+                            <div class="changes-text">${text}</div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+                if (changes.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;">Нет изменений</p>';
+                }
+            });
         }
 
         // ================== Просмотр деталей ==================
@@ -1549,7 +1750,7 @@
 
             if (act === 'add_demon') {
                 let vid = extractVideoId(document.getElementById('itemVid').value);
-                db.ref('demons').push({
+                const newDemon = {
                     name, author: val,
                     levelID: document.getElementById('itemID').value,
                     tag: document.getElementById('itemTag').value,
@@ -1562,11 +1763,22 @@
                     version: document.getElementById('itemVersion').value,
                     score: document.getElementById('itemScore').value,
                     order: demons.length
+                };
+                db.ref('demons').push(newDemon).then(() => {
+                    // После добавления логгируем
+                    setTimeout(() => {
+                        // Нужно получить обновлённый список демонов
+                        db.ref('demons').once('value', s => {
+                            const newDemons = s.val() ? Object.entries(s.val()).map(([k, d]) => ({ key: k, ...d })).sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
+                            const newPos = newDemons.findIndex(d => d.name === name) + 1;
+                            logChange('place', name, null, newPos, 'demon', newDemons);
+                        });
+                    }, 500);
                 });
                 closeAdmin();
             } else if (act === 'add_challenge') {
                 let vid = extractVideoId(document.getElementById('itemVid').value);
-                db.ref('challenges').push({
+                const newChallenge = {
                     name, author: val,
                     levelID: document.getElementById('itemID').value,
                     tag: document.getElementById('itemTag').value,
@@ -1579,6 +1791,15 @@
                     version: document.getElementById('itemVersion').value,
                     score: document.getElementById('itemScore').value,
                     order: challenges.length
+                };
+                db.ref('challenges').push(newChallenge).then(() => {
+                    setTimeout(() => {
+                        db.ref('challenges').once('value', s => {
+                            const newChallenges = s.val() ? Object.entries(s.val()).map(([k, d]) => ({ key: k, ...d })).sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
+                            const newPos = newChallenges.findIndex(c => c.name === name) + 1;
+                            logChange('place', name, null, newPos, 'challenge', newChallenges);
+                        });
+                    }, 500);
                 });
                 closeAdmin();
             } else if (act === 'add_creator') {

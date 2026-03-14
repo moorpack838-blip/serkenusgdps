@@ -13,7 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
     <style>
-        /* Все существующие стили остаются без изменений */
         :root {
             --bg: #0b0c10;
             --card-bg: rgba(31, 40, 51, 0.7);
@@ -662,7 +661,7 @@
                 <option value="delete_all_demons">🗑️ Удалить ВСЕХ демонов</option>
                 <option value="maintenance">🔧 Техперерыв вкл/выкл</option>
                 <option value="drag_drop">🖱️ Drag & Drop режим</option>
-                <option value="moderate_records">🛡️ Модерация рекордов демонов</option>
+                <option value="moderate_records">🛡️ Модерация рекордов</option>
             </select>
             <div id="fields_main">
                 <input type="text" id="itemName" placeholder="Название / Ник">
@@ -676,8 +675,8 @@
                 </div>
             </div>
             <div id="fields_victor" style="display:none;">
-                <select id="selectDemonVictim" style="width:100%"></select> <!-- для демонов -->
-                <select id="selectChallengeVictim" style="width:100%"></select> <!-- для челленджей -->
+                <select id="selectDemonVictim" style="width:100%"></select>
+                <select id="selectChallengeVictim" style="width:100%"></select>
                 <input type="text" id="vicName" placeholder="Ник игрока">
                 <input type="text" id="vicPerc" placeholder="Проценты">
                 <input type="text" id="vicAtt" placeholder="Попытки">
@@ -692,12 +691,23 @@
 
     <div id="detailModal" class="modal"><div class="modal-content" id="modalData"></div></div>
 
-    <!-- Модальное окно для подачи рекорда (демоны) -->
+    <!-- Модальное окно для подачи рекорда -->
     <div id="recordModal" class="record-modal">
         <button onclick="closeRecordModal()" style="position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:8px;background:rgba(255,70,70,0.13);border:1px solid rgba(255,70,70,0.3);color:#ff6868;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
             <i class="fas fa-times"></i>
         </button>
-        <h2>ПОДАТЬ РЕКОРД (ДЕМОН)</h2>
+        <h2>ПОДАТЬ РЕКОРД</h2>
+
+        <!-- Выбор типа -->
+        <div style="display: flex; gap: 20px; justify-content: center; margin: 10px 0;">
+            <label style="color: var(--accent-cyan);">
+                <input type="radio" name="recordType" value="demon" checked onchange="switchRecordType()"> Демон
+            </label>
+            <label style="color: var(--accent-cyan);">
+                <input type="radio" name="recordType" value="challenge" onchange="switchRecordType()"> Челлендж
+            </label>
+        </div>
+
         <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)" required>
         <input type="text" id="recordRaw" placeholder="Raw footage (ссылка на Google Drive)" required>
         <input type="text" id="recordNickname" placeholder="Твой ник (игровое имя)" required>
@@ -733,10 +743,10 @@
         let isDeleteMode = false;
         let isDragDropMode = false;
         let searchMode = 'main';
-        let currentTab = 'demons'; // 'demons', 'creators', 'challenges'
+        let currentTab = 'demons';
         let demons = [];
         let creators = [];
-        let challenges = []; // новый массив для челленджей
+        let challenges = [];
 
         let draggedItem = null;
         let draggedIndex = -1;
@@ -827,7 +837,6 @@
             }
         }
 
-        // Подписки на данные
         db.ref('demons').on('value', s => {
             const val = s.val();
             demons = val ? Object.entries(val).map(([k, d]) => ({ key: k, ...d })).sort((a,b)=>(a.order||0)-(b.order||0)) : [];
@@ -948,7 +957,7 @@
         }
 
         // Drag & Drop handlers
-        let draggedItemKey = null;
+        let draggedIndex = -1;
         function handleDragStart(index, event) {
             if (!isDragDropMode || !isAdmin) return;
             draggedIndex = index;
@@ -990,7 +999,6 @@
             draggedIndex = -1;
         }
 
-        // Общие функции для удаления/перемещения
         function moveItem(key, dir, type) {
             const items = type === 'demon' ? demons : challenges;
             const index = items.findIndex(i => i.key === key);
@@ -1007,7 +1015,6 @@
             if (confirm('Удалить элемент?')) db.ref(path + '/' + key).remove();
         }
 
-        // Показать детали (с victors)
         function showInfoByKey(key, type) {
             const item = type === 'demon' ? demons.find(x => x.key === key) : challenges.find(x => x.key === key);
             if (!item) return;
@@ -1117,7 +1124,7 @@
             return match ? match[1] : url;
         }
 
-        // Модерация рекордов (для демонов)
+        // Модерация рекордов
         function loadPendingRecords() {
             recordsRef.orderByChild('timestamp').once('value', snapshot => {
                 const container = document.getElementById('moderationContainer');
@@ -1127,9 +1134,11 @@
                     const rec = child.val();
                     if (rec.status === 'pending') {
                         hasPending = true;
+                        const typeDisplay = rec.itemType === 'challenge' ? 'Челлендж' : 'Демон';
                         const item = document.createElement('div');
                         item.className = 'moderation-item';
                         item.innerHTML = `
+                            <p><strong>Тип:</strong> ${typeDisplay}</p>
                             <p><strong>Уровень:</strong> ${rec.levelName}</p>
                             <p><strong>Ник:</strong> ${rec.nickname}</p>
                             <p><strong>Проценты:</strong> ${rec.percent}%</p>
@@ -1138,7 +1147,7 @@
                             ${rec.wish ? `<p><strong>Пожелание:</strong> ${rec.wish}</p>` : ''}
                             <p><strong>Дата:</strong> ${new Date(rec.timestamp).toLocaleString()}</p>
                             <div class="moderation-buttons">
-                                <button class="btn-approve" onclick="approveRecord('${child.key}', '${rec.levelKey}', '${rec.nickname}', ${rec.percent})">✅ Принять</button>
+                                <button class="btn-approve" onclick="approveRecord('${child.key}', '${rec.levelKey}', '${rec.nickname}', ${rec.percent}, '${rec.itemType || 'demon'}')">✅ Принять</button>
                                 <button class="btn-reject" onclick="rejectRecord('${child.key}')">❌ Отклонить</button>
                             </div>
                         `;
@@ -1149,46 +1158,42 @@
             });
         }
 
-        function approveRecord(recordKey, levelKey, nickname, percent) {
-            if (!confirm('Принять этот рекорд? Он будет добавлен в victors демона.')) return;
+        function approveRecord(recordKey, levelKey, nickname, percent, type) {
+            if (!confirm('Принять этот рекорд? Он будет добавлен в victors.')) return;
             const victorData = { name: nickname, perc: percent + '%', att: '0' };
-            db.ref(`demons/${levelKey}/victors`).push(victorData)
+            const path = type === 'challenge' ? `challenges/${levelKey}/victors` : `demons/${levelKey}/victors`;
+            db.ref(path).push(victorData)
                 .then(() => db.ref(`recordRequests/${recordKey}`).remove())
-                .then(() => { alert('Рекорд принят!'); loadPendingRecords(); })
+                .then(() => {
+                    alert('Рекорд принят!');
+                    loadPendingRecords();
+                })
                 .catch(err => alert('Ошибка: ' + err.message));
         }
 
         function rejectRecord(recordKey) {
             if (!confirm('Отклонить этот рекорд?')) return;
-            db.ref(`recordRequests/${recordKey}`).remove().then(() => { alert('Отклонён'); loadPendingRecords(); });
+            db.ref(`recordRequests/${recordKey}`).remove().then(() => {
+                alert('Отклонён');
+                loadPendingRecords();
+            });
         }
 
-        // Обновление полей админки при смене действия
-        function toggleAdmFields() {
-            const a = document.getElementById('admAction').value;
-            // скрыть модерацию
-            document.getElementById('moderationContainer').style.display = 'none';
-            document.getElementById('fields_main').style.display = (a === 'add_demon' || a === 'add_challenge' || a === 'add_creator') ? 'block' : 'none';
-            document.getElementById('fields_victor').style.display = (a === 'add_victor' || a === 'add_challenge_victor') ? 'block' : 'none';
-
-            // заполнить селекты для victors
-            if (a === 'add_victor') {
-                const sel = document.getElementById('selectDemonVictim');
-                sel.innerHTML = demons.map(d => `<option value="${d.key}">${d.name}</option>`).join('');
-            }
-            if (a === 'add_challenge_victor') {
-                const sel = document.getElementById('selectChallengeVictim');
-                sel.innerHTML = challenges.map(c => `<option value="${c.key}">${c.name}</option>`).join('');
-            }
-        }
-
-        // Подача рекорда (только для демонов)
-        function openRecordModal() {
+        // Переключение типа в форме подачи
+        function switchRecordType() {
+            const type = document.querySelector('input[name="recordType"]:checked').value;
             const select = document.getElementById('recordLevel');
             select.innerHTML = '<option value="">Выберите уровень</option>';
-            demons.forEach(d => {
-                select.innerHTML += `<option value="${d.key}">${d.name} by ${d.author}</option>`;
+            
+            let items = type === 'demon' ? demons : challenges;
+            items.forEach(item => {
+                select.innerHTML += `<option value="${item.key}">${item.name} by ${item.author}</option>`;
             });
+        }
+
+        function openRecordModal() {
+            document.querySelector('input[value="demon"]').checked = true;
+            switchRecordType();
             document.getElementById('recordModal').style.display = 'block';
         }
 
@@ -1209,6 +1214,7 @@
             const levelKey = document.getElementById('recordLevel').value;
             const wish = document.getElementById('recordWish').value.trim();
             const percent = parseInt(document.getElementById('recordPercent').value, 10);
+            const type = document.querySelector('input[name="recordType"]:checked').value;
 
             if (!proof || !raw || !nickname || !levelKey || isNaN(percent)) {
                 alert('Заполните все обязательные поля');
@@ -1221,10 +1227,13 @@
                 document.getElementById('recordError').style.display = 'none';
             }
 
+            const levelName = type === 'demon'
+                ? (demons.find(d => d.key === levelKey)?.name || 'Неизвестно')
+                : (challenges.find(c => c.key === levelKey)?.name || 'Неизвестно');
+
             const recordData = {
-                nickname, proof, raw, levelKey,
-                levelName: demons.find(d => d.key === levelKey)?.name || 'Неизвестно',
-                wish: wish || '', percent,
+                nickname, proof, raw, levelKey, itemType: type,
+                levelName, wish: wish || '', percent,
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
                 status: 'pending'
             };
@@ -1246,10 +1255,11 @@
                 const container = document.getElementById('recordsList');
                 container.innerHTML = '';
                 records.forEach(rec => {
+                    const typeDisplay = rec.itemType === 'challenge' ? 'Челлендж' : 'Демон';
                     const card = document.createElement('div');
                     card.className = 'record-card';
                     card.innerHTML = `
-                        <h3>${rec.levelName}</h3>
+                        <h3>${rec.levelName} <span style="font-size:0.7rem; color:#888;">(${typeDisplay})</span></h3>
                         <p><i class="fas fa-user"></i> ${rec.nickname || 'Аноним'}</p>
                         <p class="percentage">${rec.percent}%</p>
                         <p><i class="fab fa-youtube"></i> <a href="${rec.proof}" target="_blank">Прохождение</a></p>
@@ -1263,13 +1273,23 @@
             });
         }
 
-        // Переключение вкладок
-        function switchTab(tab) {
-            currentTab = tab;
-            render();
+        // Обновление полей админки при смене действия
+        function toggleAdmFields() {
+            const a = document.getElementById('admAction').value;
+            document.getElementById('moderationContainer').style.display = 'none';
+            document.getElementById('fields_main').style.display = (a === 'add_demon' || a === 'add_challenge' || a === 'add_creator') ? 'block' : 'none';
+            document.getElementById('fields_victor').style.display = (a === 'add_victor' || a === 'add_challenge_victor') ? 'block' : 'none';
+
+            if (a === 'add_victor') {
+                const sel = document.getElementById('selectDemonVictim');
+                sel.innerHTML = demons.map(d => `<option value="${d.key}">${d.name}</option>`).join('');
+            }
+            if (a === 'add_challenge_victor') {
+                const sel = document.getElementById('selectChallengeVictim');
+                sel.innerHTML = challenges.map(c => `<option value="${c.key}">${c.name}</option>`).join('');
+            }
         }
 
-        // Копирование адреса GDPS
         function copyGDPS() {
             const text = "alexgdops.ps.fhgdps.com";
             navigator.clipboard.writeText(text).then(() => {
@@ -1288,7 +1308,6 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // Перевод
         function toggleLang() {
             currentLang = currentLang === 'RU' ? 'EN' : 'RU';
             document.getElementById('langBtn').innerText = currentLang;
@@ -1323,6 +1342,11 @@
             document.getElementById('dlVersion').innerText = t.dlVersion;
             document.getElementById('dlDescPC').innerText = t.dlDescPC;
             document.getElementById('dlDescAnd').innerText = t.dlDescAnd;
+            render();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
             render();
         }
 

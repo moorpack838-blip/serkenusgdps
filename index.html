@@ -300,6 +300,101 @@
         .home-video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid rgba(102, 252, 241, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(102, 252, 241, 0.08); }
         .home-video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
+        /* Новые стили для раздела рекордов */
+        .records-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .submit-record-btn {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 16px 40px;
+            background: var(--accent-cyan);
+            color: #0b0c10;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .submit-record-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-cyan);
+        }
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .record-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(102,252,241,0.2);
+        }
+        .record-card h3 {
+            margin: 0 0 10px;
+            color: var(--accent-cyan);
+        }
+        .record-card p {
+            margin: 5px 0;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .record-card a {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .record-card .percentage {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #fff;
+        }
+        .record-modal {
+            display: none;
+            background: #12151e;
+            padding: 25px 18px;
+            border-radius: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+            width: calc(100% - 28px);
+            max-width: 500px;
+            border: 1px solid var(--accent-cyan);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .record-modal h2 {
+            margin-top: 0;
+            text-align: center;
+            font-family: Montserrat;
+        }
+        .record-modal input, .record-modal select, .record-modal textarea {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #1a1e29;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .record-modal textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .record-modal .error-message {
+            color: #ff6868;
+            font-size: 0.85rem;
+            margin: 5px 0;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .navbar { padding: 0 14px; height: 60px; flex-wrap: nowrap; }
             .logo { font-size: 1.2rem; }
@@ -337,6 +432,8 @@
 
             .admin-form { padding: 20px 14px; }
             .admin-form input, .admin-form select { padding: 12px; }
+
+            .records-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 400px) {
@@ -368,6 +465,7 @@
                     <a onclick="openSection('listSection'); switchTab('creators');" id="navDropCreators">КРЕАТОРЫ</a>
                 </div>
             </div>
+            <button class="nav-item" onclick="openSection('recordsSection')" id="navRecords">Рекорды</button>
             <button class="btn-download-nav" onclick="openSection('downloadSection')">
                 <i class="fas fa-download"></i> <span id="navDownloadText">Скачать</span>
             </button>
@@ -392,6 +490,9 @@
         </button>
         <button class="m-btn" onclick="openSection('listSection'); switchTab('creators'); closeBurger();">
             <i class="fas fa-star"></i> Топ Креаторов
+        </button>
+        <button class="m-btn" onclick="openSection('recordsSection'); closeBurger();">
+            <i class="fas fa-trophy"></i> Рекорды
         </button>
         <button class="m-btn green" onclick="openSection('downloadSection'); closeBurger();">
             <i class="fas fa-download"></i> Скачать игру
@@ -431,21 +532,18 @@
             <h2 class="dl-title" id="dlTitle">СКАЧАТЬ ИГРУ</h2>
             <div class="dl-version" id="dlVersion">Версия 2.2081</div>
             <div class="dl-cards">
-                <!-- PC версия -->
                 <a href="https://t.me/c/3002600653/111613" target="_blank" class="dl-card pc">
                     <i class="fab fa-windows dl-icon"></i>
                     <div class="dl-name">PC / Windows</div>
                     <div class="dl-desc" id="dlDescPC">Скачать .zip архив для игры на компьютере</div>
                 </a>
 
-                <!-- GDPS SWITCHER (новая карточка) -->
                 <div class="dl-card gdps-card" onclick="copyGDPS()">
                     <i class="fas fa-exchange-alt dl-icon"></i>
                     <div class="dl-name">GDPS SWITCHER</div>
                     <div class="dl-desc gdps-address">alexgdops.ps.fhgdps.com</div>
                 </div>
 
-                <!-- Android версия -->
                 <a href="https://t.me/c/3002600653/111612" target="_blank" class="dl-card android">
                     <i class="fab fa-android dl-icon"></i>
                     <div class="dl-name">Android</div>
@@ -474,6 +572,22 @@
         </div>
         
         <div class="container" id="mainContainer"></div>
+    </main>
+
+    <!-- НОВАЯ СЕКЦИЯ: РЕКОРДЫ -->
+    <main id="recordsSection" class="section-page">
+        <div class="hero-title">
+            <h2>РЕКОРДЫ ИГРОКОВ</h2>
+            <div class="top-50-text">SUBMIT YOUR RECORD</div>
+        </div>
+        <div class="records-container">
+            <button class="submit-record-btn" onclick="openRecordModal()">
+                <i class="fas fa-plus-circle"></i> ПОДАТЬ РЕКОРД
+            </button>
+            <div id="recordsList" class="records-grid">
+                <!-- Рекорды будут загружены сюда -->
+            </div>
+        </div>
     </main>
 
     <footer>
@@ -534,6 +648,23 @@
 
     <div id="detailModal" class="modal"><div class="modal-content" id="modalData"></div></div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОДАЧИ РЕКОРДА -->
+    <div id="recordModal" class="record-modal">
+        <button onclick="closeRecordModal()" style="position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:8px;background:rgba(255,70,70,0.13);border:1px solid rgba(255,70,70,0.3);color:#ff6868;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2>ПОДАТЬ РЕКОРД</h2>
+        <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)">
+        <input type="text" id="recordRaw" placeholder="Raw footage (ссылка)">
+        <select id="recordLevel">
+            <option value="">Выберите уровень</option>
+        </select>
+        <textarea id="recordWish" placeholder="Пожелание (необязательно)"></textarea>
+        <input type="number" id="recordPercent" placeholder="Рекорд (проценты, до 100)" min="1" max="100">
+        <div id="recordError" class="error-message">Проценты должны быть от 1 до 100</div>
+        <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;" onclick="submitRecord()">ОТПРАВИТЬ</button>
+    </div>
+
     <script>
         // ТВОЯ КОНФИГУРАЦИЯ FIREBASE
         const firebaseConfig = {
@@ -563,6 +694,9 @@
 
         let draggedItem = null;
         let draggedIndex = -1;
+
+        // Ссылка на узел с рекордами
+        const recordsRef = db.ref('recordRequests');
 
         if (localStorage.getItem('mxAdmin') === '1') {
             document.getElementById('admin-trigger').style.display = 'block';
@@ -629,6 +763,9 @@
             const drops = document.getElementsByClassName("dropdown-content");
             for (let i = 0; i < drops.length; i++) { drops[i].classList.remove('show'); }
             closeBurger();
+            if (id === 'recordsSection') {
+                loadRecords();
+            }
         }
 
         function toggleDropdown(id, event) {
@@ -779,7 +916,7 @@
                             <i class="fas fa-grip-vertical"></i> Drag me
                         </div>` : ''}
                         ${d.tag ? `<div class="demon-tag">${d.tag}</div>` : ''}
-                        <img src="${d.img}" class="card-img" onerror="this.src='https://via.placeholder.com/600x300/1f2833/66fcf1?text=Mysteryx'">
+                        <img src="${d.img}" class="card-img" onerror="this.src='https://via.placeholder.com/600x300/1f2833/66fcf1?text=AlexGDPS'">
                         <div class="card-body">
                             <h3 style="margin:0; color:var(--accent-cyan); font-size: 1.25rem;">#${i+1} ${d.name}</h3>
                             <p style="color:#aaa; margin: 6px 0 15px; font-size: 0.9rem;">by <span style="color:#fff">${d.author}</span></p>
@@ -858,7 +995,7 @@
 
         // Функция копирования адреса GDPS SWITCHER
         function copyGDPS() {
-            const text = "exgdops.ps.fhgdps.com";
+            const text = "alexgdops.ps.fhgdps.com";
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('copyToast');
                 toast.innerText = currentLang === 'RU' ? 'Адрес скопирован!' : 'Address copied!';
@@ -867,6 +1004,103 @@
             }).catch(err => {
                 console.error('Ошибка копирования: ', err);
                 alert('Не удалось скопировать');
+            });
+        }
+
+        // ========== ФУНКЦИИ ДЛЯ РЕКОРДОВ ==========
+        function openRecordModal() {
+            const select = document.getElementById('recordLevel');
+            select.innerHTML = '<option value="">Выберите уровень</option>';
+            demons.forEach(d => {
+                select.innerHTML += `<option value="${d.key}">${d.name} by ${d.author}</option>`;
+            });
+            document.getElementById('recordModal').style.display = 'block';
+        }
+
+        function closeRecordModal() {
+            document.getElementById('recordModal').style.display = 'none';
+            document.getElementById('recordProof').value = '';
+            document.getElementById('recordRaw').value = '';
+            document.getElementById('recordWish').value = '';
+            document.getElementById('recordPercent').value = '';
+            document.getElementById('recordError').style.display = 'none';
+        }
+
+        function submitRecord() {
+            const proof = document.getElementById('recordProof').value.trim();
+            const raw = document.getElementById('recordRaw').value.trim();
+            const levelKey = document.getElementById('recordLevel').value;
+            const wish = document.getElementById('recordWish').value.trim();
+            const percent = parseInt(document.getElementById('recordPercent').value, 10);
+
+            if (!proof || !raw || !levelKey || isNaN(percent)) {
+                alert('Заполните все обязательные поля');
+                return;
+            }
+            if (percent < 1 || percent > 100) {
+                document.getElementById('recordError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('recordError').style.display = 'none';
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Вы должны быть авторизованы, чтобы подать рекорд');
+                return;
+            }
+
+            const recordData = {
+                userId: user.uid,
+                userEmail: user.email,
+                userName: user.displayName || 'Аноним',
+                proof: proof,
+                raw: raw,
+                levelKey: levelKey,
+                levelName: demons.find(d => d.key === levelKey)?.name || 'Неизвестно',
+                wish: wish || '',
+                percent: percent,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: 'pending'
+            };
+
+            recordsRef.push(recordData)
+                .then(() => {
+                    alert('Рекорд успешно отправлен на модерацию!');
+                    closeRecordModal();
+                    loadRecords();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Ошибка при отправке: ' + err.message);
+                });
+        }
+
+        function loadRecords() {
+            recordsRef.orderByChild('timestamp').once('value', snapshot => {
+                const records = [];
+                snapshot.forEach(child => {
+                    records.push({ key: child.key, ...child.val() });
+                });
+                records.sort((a, b) => b.timestamp - a.timestamp);
+
+                const container = document.getElementById('recordsList');
+                container.innerHTML = '';
+                records.forEach(rec => {
+                    const card = document.createElement('div');
+                    card.className = 'record-card';
+                    card.innerHTML = `
+                        <h3>${rec.levelName}</h3>
+                        <p><i class="fas fa-user"></i> ${rec.userName} (${rec.userEmail})</p>
+                        <p class="percentage">${rec.percent}%</p>
+                        <p><i class="fab fa-youtube"></i> <a href="${rec.proof}" target="_blank">Прохождение</a></p>
+                        <p><i class="fas fa-video"></i> <a href="${rec.raw}" target="_blank">Raw</a></p>
+                        ${rec.wish ? `<p>💬 ${rec.wish}</p>` : ''}
+                        <p style="color:#888; font-size:0.8rem;">${new Date(rec.timestamp).toLocaleString()}</p>
+                        <p>Статус: ${rec.status === 'pending' ? '⏳ На модерации' : (rec.status === 'approved' ? '✅ Принят' : '❌ Отклонён')}</p>
+                    `;
+                    container.appendChild(card);
+                });
             });
         }
 
@@ -926,7 +1160,7 @@
             document.getElementById('searchModeTag').innerText = t.searchT;
             document.getElementById('searchInput').placeholder = t.searchP;
             document.getElementById('verifyLink').innerText = t.verify;
-            document.getElementById('copyToast').innerText = t.toast; // по умолчанию для ID, но мы меняем динамически в copyGDPS
+            document.getElementById('copyToast').innerText = t.toast;
             document.getElementById('navDemonListText').innerHTML = `${t.list} <i class="fas fa-caret-down"></i>`;
             document.getElementById('navDownloadText').innerText = t.navDownloadText;
             document.getElementById('navDropTop50').innerText = t.navDropTop50;
@@ -1032,6 +1266,5 @@
             }
         });
     </script>
-
 </body>
 </html>

@@ -133,7 +133,6 @@
         .dl-name { font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; font-family: 'Montserrat'; }
         .dl-desc { font-size: 0.9rem; color: #888; font-weight: 400; }
 
-        /* GDPS SWITCHER card */
         .gdps-card {
             cursor: pointer;
         }
@@ -300,7 +299,6 @@
         .home-video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid rgba(102, 252, 241, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(102, 252, 241, 0.08); }
         .home-video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* Стили для раздела рекордов */
         .records-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -393,6 +391,44 @@
             font-size: 0.85rem;
             margin: 5px 0;
             display: none;
+        }
+
+        /* Стили для модерации внутри админки */
+        .moderation-container {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .moderation-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(102,252,241,0.2);
+        }
+        .moderation-item p {
+            margin: 5px 0;
+        }
+        .moderation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .moderation-buttons button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-approve {
+            background: #2ecc71;
+            color: #fff;
+        }
+        .btn-reject {
+            background: #e74c3c;
+            color: #fff;
         }
 
         @media (max-width: 768px) {
@@ -620,6 +656,7 @@
                 <option value="delete_all_demons">🗑️ Удалить ВСЕХ демонов</option>
                 <option value="maintenance">🔧 Техперерыв вкл/выкл</option>
                 <option value="drag_drop">🖱️ Drag & Drop режим</option>
+                <option value="moderate_records">🛡️ Модерация рекордов</option>
             </select>
             <div id="fields_main">
                 <input type="text" id="itemName" placeholder="Название / Ник">
@@ -638,6 +675,12 @@
                 <input type="text" id="vicPerc" placeholder="Проценты">
                 <input type="text" id="vicAtt" placeholder="Попытки">
             </div>
+
+            <!-- Контейнер для модерации рекордов -->
+            <div id="moderationContainer" class="moderation-container" style="display:none;">
+                <!-- сюда будут грузиться заявки -->
+            </div>
+
             <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;border:none;" onclick="processAdmin()">ВЫПОЛНИТЬ</button>
             <button class="btn-more" style="background:transparent;border:1px solid #e74c3c;color:#e74c3c;margin-top:10px;" onclick="adminLogout()">ВЫЙТИ ИЗ АККАУНТА</button>
         </div>
@@ -988,24 +1031,86 @@
             } else if(act === 'drag_drop') {
                 toggleDragDropMode();
                 closeAdmin();
+            } else if(act === 'moderate_records') {
+                // Показать контейнер модерации, скрыть поля ввода
+                document.getElementById('fields_main').style.display = 'none';
+                document.getElementById('fields_victor').style.display = 'none';
+                document.getElementById('moderationContainer').style.display = 'block';
+                loadPendingRecords();
             }
         }
 
-        // Функция копирования адреса GDPS SWITCHER
-        function copyGDPS() {
-            const text = "alexgdops.ps.fhgdps.com";
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('copyToast');
-                toast.innerText = currentLang === 'RU' ? 'Адрес скопирован!' : 'Address copied!';
-                toast.className = 'show';
-                setTimeout(() => toast.className = '', 2000);
-            }).catch(err => {
-                console.error('Ошибка копирования: ', err);
-                alert('Не удалось скопировать');
+        // ========== ФУНКЦИИ ДЛЯ МОДЕРАЦИИ РЕКОРДОВ ==========
+        function loadPendingRecords() {
+            recordsRef.orderByChild('timestamp').once('value', snapshot => {
+                const container = document.getElementById('moderationContainer');
+                container.innerHTML = '';
+                let hasPending = false;
+                snapshot.forEach(child => {
+                    const rec = child.val();
+                    if (rec.status === 'pending') {
+                        hasPending = true;
+                        const item = document.createElement('div');
+                        item.className = 'moderation-item';
+                        item.innerHTML = `
+                            <p><strong>Уровень:</strong> ${rec.levelName}</p>
+                            <p><strong>Ник:</strong> ${rec.nickname}</p>
+                            <p><strong>Проценты:</strong> ${rec.percent}%</p>
+                            <p><strong>YouTube:</strong> <a href="${rec.proof}" target="_blank">ссылка</a></p>
+                            <p><strong>Raw:</strong> <a href="${rec.raw}" target="_blank">ссылка</a></p>
+                            ${rec.wish ? `<p><strong>Пожелание:</strong> ${rec.wish}</p>` : ''}
+                            <p><strong>Дата:</strong> ${new Date(rec.timestamp).toLocaleString()}</p>
+                            <div class="moderation-buttons">
+                                <button class="btn-approve" onclick="approveRecord('${child.key}', '${rec.levelKey}', '${rec.nickname}', ${rec.percent})">✅ Принять</button>
+                                <button class="btn-reject" onclick="rejectRecord('${child.key}')">❌ Отклонить</button>
+                            </div>
+                        `;
+                        container.appendChild(item);
+                    }
+                });
+                if (!hasPending) {
+                    container.innerHTML = '<p style="text-align:center; color:#888;">Нет ожидающих рекордов</p>';
+                }
             });
         }
 
-        // ========== ФУНКЦИИ ДЛЯ РЕКОРДОВ ==========
+        function approveRecord(recordKey, levelKey, nickname, percent) {
+            if (!confirm('Принять этот рекорд? Он будет добавлен в список победителей уровня.')) return;
+            // Добавляем в victors демона
+            const victorData = {
+                name: nickname,
+                perc: percent + '%',
+                att: '0'
+            };
+            db.ref(`demons/${levelKey}/victors`).push(victorData)
+                .then(() => {
+                    // Удаляем запрос
+                    return db.ref(`recordRequests/${recordKey}`).remove();
+                })
+                .then(() => {
+                    alert('Рекорд принят и добавлен в victors!');
+                    loadPendingRecords(); // обновить список
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Ошибка: ' + err.message);
+                });
+        }
+
+        function rejectRecord(recordKey) {
+            if (!confirm('Отклонить этот рекорд? Он будет удален.')) return;
+            db.ref(`recordRequests/${recordKey}`).remove()
+                .then(() => {
+                    alert('Рекорд отклонён');
+                    loadPendingRecords();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Ошибка: ' + err.message);
+                });
+        }
+
+        // ========== ФУНКЦИИ ДЛЯ РЕКОРДОВ (ПУБЛИЧНАЯ ЧАСТЬ) ==========
         function openRecordModal() {
             const select = document.getElementById('recordLevel');
             select.innerHTML = '<option value="">Выберите уровень</option>';
@@ -1093,6 +1198,20 @@
                     `;
                     container.appendChild(card);
                 });
+            });
+        }
+
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (GDPS, ЯЗЫК, И Т.Д.) ==========
+        function copyGDPS() {
+            const text = "alexgdops.ps.fhgdps.com";
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.innerText = currentLang === 'RU' ? 'Адрес скопирован!' : 'Address copied!';
+                toast.className = 'show';
+                setTimeout(() => toast.className = '', 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+                alert('Не удалось скопировать');
             });
         }
 
@@ -1218,13 +1337,22 @@
 
         function toggleAdmFields() { 
             const a = document.getElementById('admAction').value; 
-            document.getElementById('fields_main').style.display = (a === 'add_demon' || a === 'add_creator') ? 'block' : 'none'; 
-            document.getElementById('fields_demon').style.display = a === 'add_demon' ? 'block' : 'none'; 
-            document.getElementById('fields_victor').style.display = a === 'add_victor' ? 'block' : 'none'; 
+            // Скрываем контейнер модерации, если выбрано другое действие
+            if (a !== 'moderate_records') {
+                document.getElementById('moderationContainer').style.display = 'none';
+                document.getElementById('fields_main').style.display = (a === 'add_demon' || a === 'add_creator') ? 'block' : 'none'; 
+                document.getElementById('fields_demon').style.display = a === 'add_demon' ? 'block' : 'none'; 
+                document.getElementById('fields_victor').style.display = a === 'add_victor' ? 'block' : 'none'; 
+            } else {
+                // Для модерации своя обработка в processAdmin
+            }
         }
 
         function closeAdmin() { 
             document.getElementById('adminPanel').style.display='none'; 
+            // Сбросить видимость полей при закрытии
+            document.getElementById('fields_main').style.display = 'block';
+            document.getElementById('moderationContainer').style.display = 'none';
         }
         
         function switchTab(t) { 

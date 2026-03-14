@@ -300,7 +300,7 @@
         .home-video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid rgba(102, 252, 241, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(102, 252, 241, 0.08); }
         .home-video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* Новые стили для раздела рекордов */
+        /* Стили для раздела рекордов */
         .records-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -574,7 +574,6 @@
         <div class="container" id="mainContainer"></div>
     </main>
 
-    <!-- НОВАЯ СЕКЦИЯ: РЕКОРДЫ -->
     <main id="recordsSection" class="section-page">
         <div class="hero-title">
             <h2>РЕКОРДЫ ИГРОКОВ</h2>
@@ -584,9 +583,7 @@
             <button class="submit-record-btn" onclick="openRecordModal()">
                 <i class="fas fa-plus-circle"></i> ПОДАТЬ РЕКОРД
             </button>
-            <div id="recordsList" class="records-grid">
-                <!-- Рекорды будут загружены сюда -->
-            </div>
+            <div id="recordsList" class="records-grid"></div>
         </div>
     </main>
 
@@ -648,19 +645,20 @@
 
     <div id="detailModal" class="modal"><div class="modal-content" id="modalData"></div></div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОДАЧИ РЕКОРДА -->
+    <!-- Модальное окно для подачи рекорда -->
     <div id="recordModal" class="record-modal">
         <button onclick="closeRecordModal()" style="position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:8px;background:rgba(255,70,70,0.13);border:1px solid rgba(255,70,70,0.3);color:#ff6868;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
             <i class="fas fa-times"></i>
         </button>
         <h2>ПОДАТЬ РЕКОРД</h2>
-        <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)">
-        <input type="text" id="recordRaw" placeholder="Raw footage (ссылка)">
-        <select id="recordLevel">
+        <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)" required>
+        <input type="text" id="recordRaw" placeholder="Raw footage (ссылка на Google Drive)" required>
+        <input type="text" id="recordNickname" placeholder="Твой ник (игровое имя)" required>
+        <select id="recordLevel" required>
             <option value="">Выберите уровень</option>
         </select>
         <textarea id="recordWish" placeholder="Пожелание (необязательно)"></textarea>
-        <input type="number" id="recordPercent" placeholder="Рекорд (проценты, до 100)" min="1" max="100">
+        <input type="number" id="recordPercent" placeholder="Рекорд (проценты, до 100)" min="1" max="100" required>
         <div id="recordError" class="error-message">Проценты должны быть от 1 до 100</div>
         <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;" onclick="submitRecord()">ОТПРАВИТЬ</button>
     </div>
@@ -1021,6 +1019,7 @@
             document.getElementById('recordModal').style.display = 'none';
             document.getElementById('recordProof').value = '';
             document.getElementById('recordRaw').value = '';
+            document.getElementById('recordNickname').value = '';
             document.getElementById('recordWish').value = '';
             document.getElementById('recordPercent').value = '';
             document.getElementById('recordError').style.display = 'none';
@@ -1029,11 +1028,12 @@
         function submitRecord() {
             const proof = document.getElementById('recordProof').value.trim();
             const raw = document.getElementById('recordRaw').value.trim();
+            const nickname = document.getElementById('recordNickname').value.trim();
             const levelKey = document.getElementById('recordLevel').value;
             const wish = document.getElementById('recordWish').value.trim();
             const percent = parseInt(document.getElementById('recordPercent').value, 10);
 
-            if (!proof || !raw || !levelKey || isNaN(percent)) {
+            if (!proof || !raw || !nickname || !levelKey || isNaN(percent)) {
                 alert('Заполните все обязательные поля');
                 return;
             }
@@ -1044,16 +1044,8 @@
                 document.getElementById('recordError').style.display = 'none';
             }
 
-            const user = auth.currentUser;
-            if (!user) {
-                alert('Вы должны быть авторизованы, чтобы подать рекорд');
-                return;
-            }
-
             const recordData = {
-                userId: user.uid,
-                userEmail: user.email,
-                userName: user.displayName || 'Аноним',
+                nickname: nickname,
                 proof: proof,
                 raw: raw,
                 levelKey: levelKey,
@@ -1091,7 +1083,7 @@
                     card.className = 'record-card';
                     card.innerHTML = `
                         <h3>${rec.levelName}</h3>
-                        <p><i class="fas fa-user"></i> ${rec.userName} (${rec.userEmail})</p>
+                        <p><i class="fas fa-user"></i> ${rec.nickname || 'Аноним'}</p>
                         <p class="percentage">${rec.percent}%</p>
                         <p><i class="fab fa-youtube"></i> <a href="${rec.proof}" target="_blank">Прохождение</a></p>
                         <p><i class="fas fa-video"></i> <a href="${rec.raw}" target="_blank">Raw</a></p>

@@ -13,7 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
     <style>
-        /* Все стили остаются без изменений — они уже в предыдущей версии */
         :root {
             --bg: #0b0c10;
             --card-bg: rgba(31, 40, 51, 0.7);
@@ -1131,7 +1130,8 @@
                 execute: "ВЫПОЛНИТЬ",
                 noPending: "Нет ожидающих рекордов",
                 rank: "Ранг",
-                hardest: "Hardest",
+                hardestDemon: "Hardest Demon",
+                hardestChallenge: "Hardest Challenge",
                 unbounded: "Пройденные уровни",
                 changePlace: "placed at #{pos}",
                 changeRemove: "removed from #{pos}",
@@ -1227,7 +1227,8 @@
                 execute: "EXECUTE",
                 noPending: "No pending records",
                 rank: "Rank",
-                hardest: "Hardest",
+                hardestDemon: "Hardest Demon",
+                hardestChallenge: "Hardest Challenge",
                 unbounded: "Unbounded levels",
                 changePlace: "placed at #{pos}",
                 changeRemove: "removed from #{pos}",
@@ -1532,8 +1533,6 @@
             db.ref().update(updates).then(() => {
                 showToast('Порядок обновлён!');
                 logChange('move', levelName, levelKey, oldPos, newPos, type, newItems);
-                // После изменения порядка нужно пересчитать очки для всех игроков, прошедших этот уровень
-                // Это будет сделано через общий слушатель, но для надёжности вызовем пересчёт
                 recalculatePlayerScoresForLevel(levelKey, type);
             });
             draggedIndex = -1;
@@ -1561,7 +1560,6 @@
             updates[`/${type}s/${items[index].key}/order`] = target;
             updates[`/${type}s/${items[target].key}/order`] = index;
             db.ref().update(updates).then(() => {
-                // Пересчёт после перемещения
                 recalculatePlayerScoresForLevel(levelKey, type);
             });
         }
@@ -1596,27 +1594,40 @@
                 const updates = {};
                 snapshot.forEach(child => {
                     const nickname = child.key;
-                    const player = child.val() || { records: {}, score: 0, hardest: null };
+                    const player = child.val() || { records: {}, score: 0, hardestDemon: null, hardestChallenge: null };
                     if (player.records && player.records[levelKey]) {
                         // Пересчитываем счёт
                         let newScore = 0;
-                        let hardestKey = null;
-                        let hardestWeight = 0;
+                        let hardestDemonKey = null, hardestChallengeKey = null;
+                        let hardestDemonWeight = 0, hardestChallengeWeight = 0;
                         for (let lk in player.records) {
                             const recType = player.records[lk].type;
                             const w = getLevelWeight(lk, recType);
                             newScore += w;
-                            if (w > hardestWeight) {
-                                hardestWeight = w;
-                                hardestKey = lk;
+                            if (recType === 'demon') {
+                                if (w > hardestDemonWeight) {
+                                    hardestDemonWeight = w;
+                                    hardestDemonKey = lk;
+                                }
+                            } else if (recType === 'challenge') {
+                                if (w > hardestChallengeWeight) {
+                                    hardestChallengeWeight = w;
+                                    hardestChallengeKey = lk;
+                                }
                             }
                         }
                         player.score = newScore;
-                        if (hardestKey) {
-                            const hardestLevel = (type === 'demon' ? demons : challenges).find(l => l.key === hardestKey);
-                            player.hardest = { levelKey: hardestKey, levelName: hardestLevel?.name || 'Неизвестно', type: player.records[hardestKey].type };
+                        if (hardestDemonKey) {
+                            const level = demons.find(l => l.key === hardestDemonKey);
+                            player.hardestDemon = { levelKey: hardestDemonKey, levelName: level?.name || 'Неизвестно' };
                         } else {
-                            player.hardest = null;
+                            player.hardestDemon = null;
+                        }
+                        if (hardestChallengeKey) {
+                            const level = challenges.find(l => l.key === hardestChallengeKey);
+                            player.hardestChallenge = { levelKey: hardestChallengeKey, levelName: level?.name || 'Неизвестно' };
+                        } else {
+                            player.hardestChallenge = null;
                         }
                         updates[`players/${nickname}`] = player;
                     }
@@ -2210,7 +2221,7 @@
             db.ref(path).push(victorData)
                 .then(() => {
                     return playersRef.child(nickname).once('value').then(snap => {
-                        const player = snap.val() || { score: 0, hardest: null, records: {} };
+                        let player = snap.val() || { score: 0, hardestDemon: null, hardestChallenge: null, records: {} };
                         if (player.records && player.records[levelKey]) {
                             alert('Этот игрок уже проходил данный уровень! Рекорд принят, но очки не начислены повторно.');
                         } else {
@@ -2224,9 +2235,18 @@
                             player.records = player.records || {};
                             player.records[levelKey] = newRecord;
                             player.score = (player.score || 0) + weight;
-                            const hardestWeight = getLevelWeight(player.hardest?.levelKey, player.hardest?.type) || 0;
-                            if (weight > hardestWeight) {
-                                player.hardest = { levelKey, levelName, type };
+                            
+                            // Обновляем hardestDemon / hardestChallenge
+                            if (type === 'demon') {
+                                let hardestDemonWeight = getLevelWeight(player.hardestDemon?.levelKey, 'demon');
+                                if (weight > hardestDemonWeight) {
+                                    player.hardestDemon = { levelKey, levelName };
+                                }
+                            } else if (type === 'challenge') {
+                                let hardestChallengeWeight = getLevelWeight(player.hardestChallenge?.levelKey, 'challenge');
+                                if (weight > hardestChallengeWeight) {
+                                    player.hardestChallenge = { levelKey, levelName };
+                                }
                             }
                         }
                         return playersRef.child(nickname).set(player);
@@ -2258,8 +2278,7 @@
                 const playersData = snapshot.val() || {};
                 const playersList = Object.entries(playersData).map(([nick, data]) => ({
                     nick,
-                    score: data.score || 0,
-                    hardest: data.hardest?.levelName || '—'
+                    score: data.score || 0
                 }));
                 playersList.sort((a, b) => b.score - a.score);
                 const tbody = document.getElementById('rankingsBody');
@@ -2270,7 +2289,7 @@
                         <td>#${index + 1}</td>
                         <td class="clickable" onclick="openPlayerProfile('${player.nick}')">${escapeHtml(player.nick)}</td>
                         <td>${player.score.toFixed(2)}</td>
-                        <td>${escapeHtml(player.hardest)}</td>
+                        <td>—</td>
                     `;
                     tbody.appendChild(row);
                 });
@@ -2283,10 +2302,11 @@
         function openPlayerProfile(nick) {
             document.getElementById('playerProfileNick').innerText = nick;
             playersRef.child(nick).once('value', snapshot => {
-                const player = snapshot.val() || { score: 0, records: {} };
+                const player = snapshot.val() || { score: 0, records: {}, hardestDemon: null, hardestChallenge: null };
                 const t = translations[currentLang];
                 const recordsList = Object.values(player.records || {}).sort((a, b) => b.timestamp - a.timestamp);
-                const hardest = player.hardest?.levelName || '—';
+                const hardestDemon = player.hardestDemon?.levelName || '—';
+                const hardestChallenge = player.hardestChallenge?.levelName || '—';
                 const content = `
                     <div class="player-header">
                         <h2>${escapeHtml(nick)}</h2>
@@ -2296,8 +2316,12 @@
                                 <div class="value">${(player.score || 0).toFixed(2)}</div>
                             </div>
                             <div class="player-stat">
-                                <div class="label">${t.hardest}</div>
-                                <div class="value">${escapeHtml(hardest)}</div>
+                                <div class="label">${t.hardestDemon}</div>
+                                <div class="value">${escapeHtml(hardestDemon)}</div>
+                            </div>
+                            <div class="player-stat">
+                                <div class="label">${t.hardestChallenge}</div>
+                                <div class="value">${escapeHtml(hardestChallenge)}</div>
                             </div>
                         </div>
                     </div>

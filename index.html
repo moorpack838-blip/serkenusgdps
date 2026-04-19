@@ -91,28 +91,40 @@
         .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
         .mobile-menu {
-            display: none; position: fixed; top: 60px; left: 0; width: 100%;
-            background: rgba(11,12,16,0.97); backdrop-filter: blur(20px);
-            z-index: 999; border-bottom: 1px solid rgba(102,252,241,0.12);
-            padding: 14px; flex-direction: column; gap: 8px;
-            max-height: calc(100vh - 60px); overflow-y: auto;
+            display: none; position: fixed; top: 72px; left: 50%; transform: translateX(-50%);
+            width: min(calc(100% - 20px), 420px);
+            background: linear-gradient(180deg, rgba(20,25,35,0.98), rgba(10,12,18,0.98)); backdrop-filter: blur(24px);
+            z-index: 999; border: 1px solid rgba(102,252,241,0.16); border-radius: 24px;
+            box-shadow: 0 28px 80px rgba(0,0,0,0.45); padding: 18px; flex-direction: column; gap: 10px;
+            max-height: calc(100vh - 84px); overflow-y: auto;
         }
         .mobile-menu.open { display: flex; animation: mSlide 0.25s ease; }
-        @keyframes mSlide { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes mSlide { from { opacity:0; transform:translateX(-50%) translateY(-6px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+        .mobile-menu-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 4px 2px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 4px; }
+        .mobile-menu-title { margin: 0 0 4px; font-family: 'Montserrat', sans-serif; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; }
+        .mobile-menu-copy { margin: 0; color: var(--text-main); font-size: 0.82rem; line-height: 1.5; }
+        .mobile-menu-badge { padding: 7px 12px; border-radius: 999px; background: rgba(102,252,241,0.1); border: 1px solid rgba(102,252,241,0.22); color: var(--accent-cyan); font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
         .m-btn {
-            width: 100%; padding: 15px 18px; background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 13px;
-            color: var(--text-main); font-weight: 700; font-size: 0.95rem;
+            width: 100%; min-height: 56px; padding: 15px 18px; background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+            color: #f4fbfb; font-weight: 700; font-size: 0.95rem;
             text-transform: uppercase; cursor: pointer; font-family: 'Poppins', sans-serif;
-            text-align: left; transition: 0.2s; display: flex; align-items: center; gap: 12px;
+            text-align: left; transition: 0.22s ease; display: flex; align-items: center; gap: 12px;
         }
-        .m-btn:active { background: rgba(102,252,241,0.1); color: var(--accent-cyan); border-color: rgba(102,252,241,0.3); }
-        .m-btn.active { background: rgba(102,252,241,0.12); color: var(--accent-cyan); border-color: rgba(102,252,241,0.35); }
-        .m-btn.green { background: #22c55e; color: #fff; border-color: transparent; }
+        .m-btn:hover { transform: translateY(-1px); border-color: rgba(102,252,241,0.2); background: rgba(102,252,241,0.08); }
+        .m-btn:active { background: rgba(102,252,241,0.12); color: var(--accent-cyan); border-color: rgba(102,252,241,0.3); }
+        .m-btn.active { background: rgba(102,252,241,0.14); color: var(--accent-cyan); border-color: rgba(102,252,241,0.35); box-shadow: inset 0 0 0 1px rgba(102,252,241,0.08); }
+        .m-btn.green { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; border-color: transparent; box-shadow: 0 14px 28px rgba(34, 197, 94, 0.25); }
         .m-btn.green:active { background: #16a34a; }
-        .m-socials { display: flex; justify-content: center; gap: 28px; padding: 8px 0 4px; }
-        .m-socials a { font-size: 1.9rem; text-decoration: none; transition: 0.3s; }
-        .m-lang { align-self: center; background: none; border: 1px solid rgba(102,252,241,0.4); color: var(--accent-cyan); padding: 7px 22px; cursor: pointer; border-radius: 8px; font-weight: 700; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        .m-btn-label { display: flex; align-items: center; gap: 12px; }
+        .m-btn-arrow { margin-left: auto; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+        .mobile-submenu { display: none; padding: 8px 0 2px 14px; margin-left: 14px; border-left: 1px solid rgba(102,252,241,0.15); }
+        .mobile-submenu .m-btn { min-height: 48px; font-size: 0.83rem; padding: 12px 14px; border-radius: 14px; }
+        .mobile-menu-footer { margin-top: 6px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .m-socials { display: flex; justify-content: center; gap: 22px; padding: 4px 0 10px; }
+        .m-socials a { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; text-decoration: none; transition: 0.25s ease; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+        .m-socials a:hover { transform: translateY(-2px); }
+        .m-lang { width: 100%; align-self: center; background: rgba(102,252,241,0.08); border: 1px solid rgba(102,252,241,0.24); color: var(--accent-cyan); padding: 12px 22px; cursor: pointer; border-radius: 14px; font-weight: 700; font-family: 'Poppins', sans-serif; font-size: 0.92rem; }
 
         .section-page { display: none; flex: 1; margin-top: 80px; padding-bottom: 50px; animation: fadeInPage 0.4s ease; }
         .section-page.active { display: block; }
@@ -514,18 +526,37 @@
         .btn-del { background-color: #e74c3c !important; } 
         .ctrl-btn:hover { transform: scale(1.1); filter: brightness(1.2); }
 
-        #admin-trigger { position: fixed; bottom: 20px; left: 20px; opacity: 0.2; cursor: pointer; font-size: 1.5rem; background: none; border: none; color: white; z-index: 1000; transition: 0.3s; display: block; /* Всегда видна */ }
-        #admin-trigger:hover { opacity: 1; color: var(--accent-cyan); }
-        .admin-form {
-            display: none; background: #12151e; padding: 25px 18px; border-radius: 20px;
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 2000; width: calc(100% - 28px); max-width: 450px;
-            max-height: calc(100vh - 40px); overflow-y: auto;
-            border: 1px solid var(--accent-cyan); box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        #admin-trigger {
+            position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 18px;
+            cursor: pointer; font-size: 1.2rem; background: linear-gradient(135deg, rgba(102,252,241,0.16), rgba(69,162,158,0.18));
+            border: 1px solid rgba(102,252,241,0.26); color: white; z-index: 1000; transition: 0.25s ease; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 16px 35px rgba(0,0,0,0.35); backdrop-filter: blur(18px);
         }
-        .admin-form h2 { margin-top: 0; font-size: 1.5rem; color: white; text-align: center; font-family: Montserrat; }
-        .admin-form input, .admin-form select { width: 100%; padding: 14px; margin: 10px 0; background: #1a1e29; border: 1px solid #333; color: white; border-radius: 12px; font-size: 0.95rem; outline: none; transition: 0.3s; }
-        .admin-form input:focus, .admin-form select:focus { border-color: var(--accent-cyan); }
+        #admin-trigger:hover { transform: translateY(-2px); color: var(--accent-cyan); box-shadow: 0 18px 36px rgba(102,252,241,0.18); }
+        .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(6, 8, 13, 0.72); backdrop-filter: blur(8px); z-index: 1990; }
+        .admin-form {
+            display: none; background: linear-gradient(180deg, rgba(18, 21, 30, 0.98), rgba(10, 12, 18, 0.98)); padding: 24px 20px 20px; border-radius: 28px;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2000; width: min(calc(100% - 28px), 560px);
+            max-height: calc(100vh - 40px); overflow-y: auto;
+            border: 1px solid rgba(102,252,241,0.24); box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+        }
+        .admin-form::before { content: ""; position: absolute; inset: 0 0 auto; height: 140px; border-radius: 28px 28px 0 0; background: radial-gradient(circle at top left, rgba(102,252,241,0.18), transparent 58%); pointer-events: none; }
+        .admin-close-btn { position: sticky; top: 0; margin-left: auto; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,70,70,0.12); border: 1px solid rgba(255,70,70,0.28); color: #ff7f7f; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .admin-panel-header { position: relative; margin: -10px 0 20px; padding-right: 52px; }
+        .admin-kicker { display: inline-block; margin-bottom: 10px; padding: 7px 12px; border-radius: 999px; background: rgba(102,252,241,0.08); border: 1px solid rgba(102,252,241,0.18); color: var(--accent-cyan); font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .admin-form h2 { margin: 0 0 8px; font-size: 2rem; color: white; text-align: left; font-family: Montserrat, sans-serif; letter-spacing: 1px; }
+        .admin-panel-copy { margin: 0; color: var(--text-main); line-height: 1.6; font-size: 0.95rem; }
+        .admin-section { position: relative; margin-top: 18px; padding: 18px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.06); }
+        .admin-section-title { margin: 0 0 14px; color: #fff; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .admin-form input, .admin-form select { width: 100%; padding: 14px 15px; margin: 10px 0; background: rgba(20, 24, 34, 0.9); border: 1px solid rgba(255,255,255,0.08); color: white; border-radius: 14px; font-size: 0.95rem; outline: none; transition: 0.25s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+        .admin-form input:focus, .admin-form select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 4px rgba(102,252,241,0.1); }
+        .admin-action-select { margin: 0; }
+        .admin-actions { display: flex; gap: 12px; margin-top: 18px; }
+        .admin-btn { width: 100%; min-height: 52px; border-radius: 14px; font-weight: 800; font-family: 'Poppins', sans-serif; cursor: pointer; transition: 0.25s ease; }
+        .admin-btn:hover { transform: translateY(-1px); }
+        .admin-btn-primary { background: var(--main-grad); color: #0b0c10; border: none; }
+        .admin-btn-secondary { background: transparent; border: 1px solid rgba(231,76,60,0.55); color: #ff8d82; }
 
         /* Стили для красивого списка управления голосованиями */
         .vote-management-list {
@@ -990,8 +1021,17 @@
 
             .home-video-section { padding: 0 14px; margin-bottom: 48px; }
 
-            .admin-form { padding: 20px 14px; }
-            .admin-form input, .admin-form select { padding: 12px; }
+            .mobile-menu { top: 68px; width: calc(100% - 16px); max-height: calc(100vh - 76px); border-radius: 22px; padding: 16px; }
+            .mobile-menu-head { align-items: center; }
+            .mobile-menu-copy { font-size: 0.78rem; }
+
+            #admin-trigger { width: 50px; height: 50px; bottom: 16px; left: 16px; border-radius: 16px; }
+            .admin-form { top: auto; bottom: 10px; left: 50%; transform: translateX(-50%); width: calc(100% - 12px); max-height: calc(100vh - 20px); border-radius: 24px; padding: 18px 14px 16px; }
+            .admin-panel-header { margin-top: 4px; }
+            .admin-form h2 { font-size: 1.5rem; }
+            .admin-section { padding: 14px; border-radius: 18px; }
+            .admin-form input, .admin-form select { padding: 12px; border-radius: 12px; }
+            .admin-actions { flex-direction: column; }
 
             .records-grid { grid-template-columns: 1fr; }
             .detail-stats { grid-template-columns: 1fr; }
@@ -1050,16 +1090,25 @@
     </nav>
 
     <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-head">
+            <div>
+                <h3 class="mobile-menu-title">Quick Navigation</h3>
+                <p class="mobile-menu-copy">Быстрый доступ к разделам, спискам и загрузке с удобными кнопками для телефона.</p>
+            </div>
+            <span class="mobile-menu-badge">Mobile</span>
+        </div>
+
         <button class="m-btn" onclick="openSection('homeSection'); closeBurger();" data-section="homeSection">
-            <i class="fas fa-home"></i> Главная
+            <span class="m-btn-label"><i class="fas fa-home"></i> Главная</span>
+            <i class="fas fa-chevron-right m-btn-arrow"></i>
         </button>
         
         <div style="position: relative; width: 100%;">
-            <button class="m-btn" onclick="toggleMobileSubmenu('listsSubmenu')" style="display: flex; justify-content: space-between;" data-section="listSection">
-                <span><i class="fas fa-list"></i> Списки</span>
-                <i class="fas fa-caret-down" id="listsSubmenuIcon"></i>
+            <button class="m-btn" onclick="toggleMobileSubmenu('listsSubmenu')" data-section="listSection">
+                <span class="m-btn-label"><i class="fas fa-list"></i> Списки</span>
+                <i class="fas fa-caret-down m-btn-arrow" id="listsSubmenuIcon"></i>
             </button>
-            <div id="listsSubmenu" style="display: none; padding-left: 20px;">
+            <div id="listsSubmenu" class="mobile-submenu">
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('demons'); closeBurger();" style="font-size:0.85rem;">Demon List</button>
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('creators'); closeBurger();" style="font-size:0.85rem;">Creator Top</button>
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('challenges'); closeBurger();" style="font-size:0.85rem;">Челлендж лист</button>
@@ -1069,22 +1118,28 @@
         </div>
 
         <button class="m-btn" onclick="openSection('recordsSection'); closeBurger();" data-section="recordsSection">
-            <i class="fas fa-trophy"></i> Рекорды
+            <span class="m-btn-label"><i class="fas fa-trophy"></i> Рекорды</span>
+            <i class="fas fa-chevron-right m-btn-arrow"></i>
         </button>
         <button class="m-btn" onclick="openSection('rankingsSection'); closeBurger();" data-section="rankingsSection">
-            <i class="fas fa-chart-line"></i> Топ игроков
+            <span class="m-btn-label"><i class="fas fa-chart-line"></i> Топ игроков</span>
+            <i class="fas fa-chevron-right m-btn-arrow"></i>
         </button>
         <button class="m-btn" onclick="openSection('changesSection'); closeBurger();" data-section="changesSection">
-            <i class="fas fa-history"></i> Изменения
+            <span class="m-btn-label"><i class="fas fa-history"></i> Изменения</span>
+            <i class="fas fa-chevron-right m-btn-arrow"></i>
         </button>
         <button class="m-btn green" onclick="openSection('downloadSection'); closeBurger();" data-section="downloadSection">
-            <i class="fas fa-download"></i> Скачать игру
+            <span class="m-btn-label"><i class="fas fa-download"></i> Скачать игру</span>
+            <i class="fas fa-chevron-right m-btn-arrow"></i>
         </button>
-        <div class="m-socials">
-            <a href="https://t.me/serkenustut" target="_blank" style="color:#00a2ed;"><i class="fab fa-telegram"></i></a>
-            <a href="https://www.youtube.com/@TheSilveerBarGMD" target="_blank" style="color:#ff0000;"><i class="fab fa-youtube"></i></a>
+        <div class="mobile-menu-footer">
+            <div class="m-socials">
+                <a href="https://t.me/serkenustut" target="_blank" style="color:#00a2ed;"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.youtube.com/@TheSilveerBarGMD" target="_blank" style="color:#ff0000;"><i class="fab fa-youtube"></i></a>
+            </div>
+            <button class="m-lang" onclick="toggleLang()">RU / EN</button>
         </div>
-        <button class="m-lang" onclick="toggleLang()">RU / EN</button>
     </div>
 
     <main id="homeSection" class="section-page active">
@@ -1300,39 +1355,52 @@
         <a href="https://t.me/c/3002600653/115774" id="verifyLink" style="color:#666; text-decoration:none; font-size:0.85rem; transition:0.3s;" target="_blank">Критерии верификации</a>
     </footer>
 
-    <button id="admin-trigger" onclick="openAdmin()"><i class="fas fa-cog"></i></button>
+    <button id="admin-trigger" onclick="openAdmin()" aria-label="Open admin panel"><i class="fas fa-cog"></i></button>
+
+    <div id="adminOverlay" class="admin-overlay" onclick="closeAdmin()"></div>
 
     <div id="adminPanel" class="admin-form">
-        <button onclick="closeAdmin()" style="position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:8px;background:rgba(255,70,70,0.13);border:1px solid rgba(255,70,70,0.3);color:#ff6868;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <button class="admin-close-btn" onclick="closeAdmin()">
             <i class="fas fa-times"></i>
         </button>
-        <h2>ADMIN PANEL</h2>
+        <div class="admin-panel-header">
+            <span class="admin-kicker">Control Center</span>
+            <h2>ADMIN PANEL</h2>
+            <p class="admin-panel-copy">Улучшенная панель управления с более удобной навигацией, крупными полями и комфортной работой на телефоне.</p>
+        </div>
 
-        <div id="loginBlock">
+        <div id="loginBlock" class="admin-section">
+            <div class="admin-section-title">Авторизация</div>
             <input type="email" id="adminEmail" placeholder="Email">
             <input type="password" id="adminPass" placeholder="Пароль">
             <div id="loginError" style="color:#ff6868;font-size:0.85rem;text-align:center;margin-top:6px;display:none;">Неверный email или пароль</div>
-            <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;border:none;" onclick="adminLogin()">ВОЙТИ</button>
+            <div class="admin-actions">
+                <button class="btn-more admin-btn admin-btn-primary" style="margin-top:0;border:none;" onclick="adminLogin()">ВОЙТИ</button>
+            </div>
         </div>
 
         <div id="adminControls" style="display:none;">
-            <select id="admAction" onchange="toggleAdmFields()">
-                <option value="add_demon">Добавить Демона</option>
-                <option value="add_challenge">Добавить Челлендж</option>
-                <option value="add_impossible">Добавить Impossible уровень</option>
-                <option value="add_future">Добавить Future Demon</option>
-                <option value="add_creator">Добавить Креатора</option>
-                <option value="add_victor">Добавить Рекорд Демона</option>
-                <option value="add_challenge_victor">Добавить Рекорд Челленджа</option>
-                <option value="delete_mode">Удаление / Движение (Демоны/Челленджи/Impossible/Future)</option>
-                <option value="delete_all_demons">🗑️ Удалить ВСЕХ демонов</option>
-                <option value="maintenance">🔧 Техперерыв вкл/выкл</option>
-                <option value="drag_drop">🖱️ Drag & Drop режим</option>
-                <option value="moderate_records">🛡️ Модерация рекордов</option>
-                <option value="edit_level">✏️ Редактировать уровень</option>
-                <option value="manage_votes">🗳️ Управление голосованиями</option>
-            </select>
-            <div id="fields_main">
+            <div class="admin-section">
+                <div class="admin-section-title">Действие</div>
+                <select id="admAction" class="admin-action-select" onchange="toggleAdmFields()">
+                    <option value="add_demon">Добавить Демона</option>
+                    <option value="add_challenge">Добавить Челлендж</option>
+                    <option value="add_impossible">Добавить Impossible уровень</option>
+                    <option value="add_future">Добавить Future Demon</option>
+                    <option value="add_creator">Добавить Креатора</option>
+                    <option value="add_victor">Добавить Рекорд Демона</option>
+                    <option value="add_challenge_victor">Добавить Рекорд Челленджа</option>
+                    <option value="delete_mode">Удаление / Движение (Демоны/Челленджи/Impossible/Future)</option>
+                    <option value="delete_all_demons">🗑️ Удалить ВСЕХ демонов</option>
+                    <option value="maintenance">🔧 Техперерыв вкл/выкл</option>
+                    <option value="drag_drop">🖱️ Drag & Drop режим</option>
+                    <option value="moderate_records">🛡️ Модерация рекордов</option>
+                    <option value="edit_level">✏️ Редактировать уровень</option>
+                    <option value="manage_votes">🗳️ Управление голосованиями</option>
+                </select>
+            </div>
+            <div id="fields_main" class="admin-section">
+                <div class="admin-section-title">Основные данные</div>
                 <input type="text" id="itemName" placeholder="Название">
                 <input type="text" id="itemVal" placeholder="Автор">
                 <div id="fields_demon_challenge" style="display:block;">
@@ -1351,7 +1419,8 @@
                     <input type="number" id="itemPosition" placeholder="Позиция (1 - N) [необязательно]" min="1">
                 </div>
             </div>
-            <div id="fields_victor" style="display:none;">
+            <div id="fields_victor" class="admin-section" style="display:none;">
+                <div class="admin-section-title">Рекорд</div>
                 <select id="selectDemonVictim" style="width:100%"></select>
                 <select id="selectChallengeVictim" style="width:100%"></select>
                 <input type="text" id="vicName" placeholder="Ник игрока">
@@ -1359,7 +1428,8 @@
                 <input type="text" id="vicAtt" placeholder="Попытки">
             </div>
 
-            <div id="fields_edit" style="display:none;">
+            <div id="fields_edit" class="admin-section" style="display:none;">
+                <div class="admin-section-title">Редактирование</div>
                 <select id="editTypeSelect">
                     <option value="demon">Демон</option>
                     <option value="challenge">Челлендж</option>
@@ -1387,7 +1457,7 @@
             </div>
 
             <!-- Блок управления голосованиями (улучшенный) -->
-            <div id="fields_votes" style="display:none;">
+            <div id="fields_votes" class="admin-section" style="display:none;">
                 <h3 style="color:var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-poll"></i> Управление голосованиями
                 </h3>
@@ -1412,10 +1482,12 @@
                 </div>
             </div>
 
-            <div id="moderationContainer" class="moderation-container" style="display:none;"></div>
+            <div id="moderationContainer" class="moderation-container admin-section" style="display:none;"></div>
 
-            <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;border:none;" onclick="processAdmin()">ВЫПОЛНИТЬ</button>
-            <button class="btn-more" style="background:transparent;border:1px solid #e74c3c;color:#e74c3c;margin-top:10px;" onclick="adminLogout()">ВЫЙТИ ИЗ АККАУНТА</button>
+            <div class="admin-actions">
+                <button class="btn-more admin-btn admin-btn-primary" style="margin-top:0;border:none;" onclick="processAdmin()">ВЫПОЛНИТЬ</button>
+                <button class="btn-more admin-btn admin-btn-secondary" style="margin-top:0;" onclick="adminLogout()">ВЫЙТИ ИЗ АККАУНТА</button>
+            </div>
         </div>
     </div>
 
@@ -2571,17 +2643,28 @@
             document.getElementById('loginBlock').style.display = isAdmin ? 'none' : 'block';
             document.getElementById('adminControls').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('loginError').style.display = 'none';
+            document.getElementById('adminOverlay').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'block';
+            document.body.style.overflow = 'hidden';
             toggleAdmFields();
         }
 
         function closeAdmin() {
+            document.getElementById('adminOverlay').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'none';
+            document.body.style.overflow = '';
             document.getElementById('fields_main').style.display = 'block';
             document.getElementById('fields_edit').style.display = 'none';
             document.getElementById('fields_votes').style.display = 'none';
             document.getElementById('moderationContainer').style.display = 'none';
         }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (document.getElementById('adminPanel').style.display === 'block') closeAdmin();
+                if (document.getElementById('mobileMenu').classList.contains('open')) closeBurger();
+            }
+        });
 
         function extractVideoId(url) {
             if (!url) return '';

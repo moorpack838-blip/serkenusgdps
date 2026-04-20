@@ -981,6 +981,22 @@
         .footer-socials { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .footer-socials a { color: var(--text-main); font-size: 2rem; transition: 0.3s; text-decoration: none; }
         .footer-socials a:hover { color: var(--accent-cyan); transform: translateY(-3px); }
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+        }
 
         .btn-more { width: 100%; padding: 15px; background: rgba(102, 252, 241, 0.1); border: 1px solid rgba(102, 252, 241, 0.3); color: var(--accent-cyan); border-radius: 12px; cursor: pointer; font-weight: 900; text-transform: uppercase; transition: 0.3s; font-size: 0.85rem; letter-spacing: 1px; }
         .btn-more:hover { background: var(--main-grad); color: #0b0c10; border-color: transparent; }
@@ -2076,7 +2092,10 @@
             <a href="https://www.youtube.com/@TheSilveerBarGMD" target="_blank"><i class="fab fa-youtube"></i></a>
         </div>
         <p style="color:var(--text-main);">© 2026 Serkenus GDPS. Developed with passion.</p>
-        <a href="https://t.me/c/3002600653/115774" id="verifyLink" style="color:#666; text-decoration:none; font-size:0.85rem; transition:0.3s;" target="_blank">Критерии верификации</a>
+        <div class="footer-links">
+            <a href="https://t.me/c/3002600653/115774" id="verifyLink" target="_blank">Критерии верификации</a>
+            <a href="https://t.me/chat_serkenusa/5693" id="demonRulesLink" target="_blank">Правила добавления демона</a>
+        </div>
     </footer>
 
     <button id="admin-trigger" onclick="openAdmin()" aria-label="Open admin panel"><i class="fas fa-cog"></i></button>
@@ -2316,6 +2335,7 @@
                 gdpsCopied: "Адрес скопирован!",
                 copyToast: "ID Скопировано!",
                 verifyLink: "Критерии верификации",
+                demonRulesLink: "Правила добавления демона",
                 searchModeMain: "Название / Автор",
                 searchModeTag: "По тегу",
                 searchPlaceholder: "Поиск...",
@@ -2431,6 +2451,7 @@
                 gdpsCopied: "Address copied!",
                 copyToast: "ID Copied!",
                 verifyLink: "Verification Criteria",
+                demonRulesLink: "Demon Submission Rules",
                 searchModeMain: "Name / Author",
                 searchModeTag: "By Tag",
                 searchPlaceholder: "Search...",
@@ -2705,6 +2726,7 @@
             document.getElementById('downloadNoteTitleThree').innerText = extra.downloadNoteTitleThree;
             document.getElementById('downloadNoteTextThree').innerText = extra.downloadNoteTextThree;
             document.getElementById('verifyLink').innerText = t.verifyLink;
+            document.getElementById('demonRulesLink').innerText = t.demonRulesLink;
             document.getElementById('copyToast').innerText = t.copyToast;
             document.getElementById('searchModeMain').innerText = t.searchModeMain;
             document.getElementById('searchModeTag').innerText = t.searchModeTag;

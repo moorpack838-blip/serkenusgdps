@@ -4304,7 +4304,7 @@
             const recordData = {
                 nickname, proof, raw, levelKey, itemType: type,
                 levelName, wish: wish || '', percent,
-                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                timestamp: Date.now(),
                 status: 'pending'
             };
 

@@ -1798,59 +1798,59 @@
             <div class="hero-shell">
                 <div class="hero-content">
                     <div class="hero-badge" id="heroBadge"><i class="fas fa-bolt"></i> PRIVATE SERVER - DEMON LIST - COMMUNITY</div>
-                    <h1 id="welcomeTitle">SERKENUS <span class="hero-title-accent">GDPS</span></h1>
+                    <h1 id="welcomeTitle">SERKENUS <span class="hero-title-accent" id="welcomeTitleAccent">GDPS</span></h1>
                     <p id="welcomeDesc">Окунись в мир самого амбициозного приватного сервера Geometry Dash. Стабильность, уникальные уровни и сильнейшее комьюнити игроков.</p>
                     <div class="hero-btns">
                         <button onclick="openSection('downloadSection')" class="btn-main" id="btnPlay">СКАЧАТЬ ИГРУ</button>
                         <button onclick="openSection('listSection'); switchTab('demons');" class="btn-outline" id="btnList">DEMON LIST</button>
                     </div>
                     <div class="hero-points">
-                        <div class="hero-point"><i class="fas fa-satellite-dish"></i> Live rankings and updates</div>
-                        <div class="hero-point"><i class="fas fa-layer-group"></i> Clean access to every list</div>
-                        <div class="hero-point"><i class="fas fa-gamepad"></i> Download and play in minutes</div>
+                        <div class="hero-point" id="heroPointOne"><i class="fas fa-satellite-dish"></i> Live rankings and updates</div>
+                        <div class="hero-point" id="heroPointTwo"><i class="fas fa-layer-group"></i> Clean access to every list</div>
+                        <div class="hero-point" id="heroPointThree"><i class="fas fa-gamepad"></i> Download and play in minutes</div>
                     </div>
                 </div>
 
                 <aside class="hero-side">
                     <div class="hero-panel hero-panel-primary">
-                        <span class="panel-kicker">Featured Experience</span>
-                        <h3>Built like a polished game hub, not a plain list page.</h3>
-                        <p>Everything important is surfaced immediately: install, browse demons, submit records, and stay synced with the competitive scene.</p>
+                        <span class="panel-kicker" id="heroPanelKicker">Featured Experience</span>
+                        <h3 id="heroPanelTitle">Built like a polished game hub, not a plain list page.</h3>
+                        <p id="heroPanelCopy">Everything important is surfaced immediately: install, browse demons, submit records, and stay synced with the competitive scene.</p>
                         <div class="hero-queue">
                             <div class="queue-item">
                                 <div class="queue-label">
-                                    <strong>Instant Download</strong>
-                                    <span>Windows build, APK, and switcher access</span>
+                                    <strong id="queueTitleOne">Instant Download</strong>
+                                    <span id="queueCopyOne">Windows build, APK, and switcher access</span>
                                 </div>
-                                <span class="queue-chip">Fast Start</span>
+                                <span class="queue-chip" id="queueChipOne">Fast Start</span>
                             </div>
                             <div class="queue-item">
                                 <div class="queue-label">
-                                    <strong>Competitive Lists</strong>
-                                    <span>Demon, challenge, impossible, future, creators</span>
+                                    <strong id="queueTitleTwo">Competitive Lists</strong>
+                                    <span id="queueCopyTwo">Demon, challenge, impossible, future, creators</span>
                                 </div>
-                                <span class="queue-chip">Top 50</span>
+                                <span class="queue-chip" id="queueChipTwo">Top 50</span>
                             </div>
                             <div class="queue-item">
                                 <div class="queue-label">
-                                    <strong>Community Pulse</strong>
-                                    <span>Records, voting, rankings, and recent changes</span>
+                                    <strong id="queueTitleThree">Community Pulse</strong>
+                                    <span id="queueCopyThree">Records, voting, rankings, and recent changes</span>
                                 </div>
-                                <span class="queue-chip">Live</span>
+                                <span class="queue-chip" id="queueChipThree">Live</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="hero-mini-grid">
                         <div class="mini-card">
-                            <span class="mini-card-label">Atmosphere</span>
+                            <span class="mini-card-label" id="miniLabelOne">Atmosphere</span>
                             <span class="mini-card-value">24/7</span>
-                            <div class="mini-card-copy">Always-on navigation and a cleaner path into the server.</div>
+                            <div class="mini-card-copy" id="miniCopyOne">Always-on navigation and a cleaner path into the server.</div>
                         </div>
                         <div class="mini-card">
-                            <span class="mini-card-label">Language</span>
+                            <span class="mini-card-label" id="miniLabelTwo">Language</span>
                             <span class="mini-card-value">RU / EN</span>
-                            <div class="mini-card-copy">Quick switching for local and international players.</div>
+                            <div class="mini-card-copy" id="miniCopyTwo">Quick switching for local and international players.</div>
                         </div>
                     </div>
                 </aside>
@@ -1887,7 +1887,7 @@
                     <h2 class="section-heading" id="featureHeading">Everything important is a single click away</h2>
                     <p class="section-copy" id="featureCopy">The site now puts the core actions first so new players can install quickly, competitors can submit records faster, and regular visitors can jump straight into the latest list activity.</p>
                 </div>
-                <div class="section-side-note">A sharper first impression, stronger contrast, better hierarchy, and cleaner actions now make the interface feel more like a premium gaming platform.</div>
+                <div class="section-side-note" id="sectionSideNote">A sharper first impression, stronger contrast, better hierarchy, and cleaner actions now make the interface feel more like a premium gaming platform.</div>
             </div>
             <div class="feature-grid">
                 <article class="feature-card">
@@ -2590,6 +2590,54 @@
             }
         };
 
+        Object.assign(extraTranslations.RU, {
+            welcomeTitleAccent: "GDPS",
+            heroPointOne: "Рейтинги и обновления в реальном времени",
+            heroPointTwo: "Чистый доступ ко всем спискам",
+            heroPointThree: "Скачайте и заходите в игру за пару минут",
+            heroPanelKicker: "Главное впечатление",
+            heroPanelTitle: "Сайт оформлен как полноценный игровой хаб, а не как простая страница со списками.",
+            heroPanelCopy: "Все важное вынесено на первый план: установка, demon list, подача рекордов и быстрый контроль за соревновательной сценой.",
+            queueTitleOne: "Мгновенное скачивание",
+            queueCopyOne: "Windows-сборка, APK и адрес switcher всегда под рукой",
+            queueChipOne: "Быстрый старт",
+            queueTitleTwo: "Соревновательные списки",
+            queueCopyTwo: "Demon, challenge, impossible, future и creator top в одном ритме",
+            queueChipTwo: "Топ 50",
+            queueTitleThree: "Пульс сообщества",
+            queueCopyThree: "Рекорды, голосования, рейтинги и последние изменения",
+            queueChipThree: "Live",
+            miniLabelOne: "Атмосфера",
+            miniCopyOne: "Постоянная навигация и более чистый путь к серверу.",
+            miniLabelTwo: "Язык",
+            miniCopyTwo: "Быстрое переключение для русских и международных игроков.",
+            sectionSideNote: "Более сильное первое впечатление, лучший контраст, четкая иерархия и аккуратные действия делают сайт похожим на премиальную игровую платформу."
+        });
+
+        Object.assign(extraTranslations.EN, {
+            welcomeTitleAccent: "GDPS",
+            heroPointOne: "Live rankings and updates",
+            heroPointTwo: "Clean access to every list",
+            heroPointThree: "Download and play in minutes",
+            heroPanelKicker: "Featured Experience",
+            heroPanelTitle: "Built like a polished game hub, not a plain list page.",
+            heroPanelCopy: "Everything important is surfaced immediately: install, browse demons, submit records, and stay synced with the competitive scene.",
+            queueTitleOne: "Instant Download",
+            queueCopyOne: "Windows build, APK, and switcher access",
+            queueChipOne: "Fast Start",
+            queueTitleTwo: "Competitive Lists",
+            queueCopyTwo: "Demon, challenge, impossible, future, creators",
+            queueChipTwo: "Top 50",
+            queueTitleThree: "Community Pulse",
+            queueCopyThree: "Records, voting, rankings, and recent changes",
+            queueChipThree: "Live",
+            miniLabelOne: "Atmosphere",
+            miniCopyOne: "Always-on navigation and a cleaner path into the server.",
+            miniLabelTwo: "Language",
+            miniCopyTwo: "Quick switching for local and international players.",
+            sectionSideNote: "A sharper first impression, stronger contrast, better hierarchy, and cleaner actions now make the interface feel more like a premium gaming platform."
+        });
+
         function applyTranslations() {
             const t = translations[currentLang];
             const extra = extraTranslations[currentLang];
@@ -2600,10 +2648,29 @@
             document.getElementById('navChanges').innerText = t.navChanges;
             document.getElementById('navDownloadText').innerText = t.navDownloadText;
             document.getElementById('heroBadge').innerHTML = `<i class="fas fa-bolt"></i> ${extra.heroBadge}`;
-            document.getElementById('welcomeTitle').innerText = t.welcomeTitle;
+            document.getElementById('welcomeTitle').innerHTML = `${t.welcomeTitle.replace(' GDPS', '')} <span class="hero-title-accent" id="welcomeTitleAccent">${extra.welcomeTitleAccent}</span>`;
             document.getElementById('welcomeDesc').innerText = t.welcomeDesc;
             document.getElementById('btnPlay').innerText = t.btnPlay;
             document.getElementById('btnList').innerText = t.btnList;
+            document.getElementById('heroPointOne').innerHTML = `<i class="fas fa-satellite-dish"></i> ${extra.heroPointOne}`;
+            document.getElementById('heroPointTwo').innerHTML = `<i class="fas fa-layer-group"></i> ${extra.heroPointTwo}`;
+            document.getElementById('heroPointThree').innerHTML = `<i class="fas fa-gamepad"></i> ${extra.heroPointThree}`;
+            document.getElementById('heroPanelKicker').innerText = extra.heroPanelKicker;
+            document.getElementById('heroPanelTitle').innerText = extra.heroPanelTitle;
+            document.getElementById('heroPanelCopy').innerText = extra.heroPanelCopy;
+            document.getElementById('queueTitleOne').innerText = extra.queueTitleOne;
+            document.getElementById('queueCopyOne').innerText = extra.queueCopyOne;
+            document.getElementById('queueChipOne').innerText = extra.queueChipOne;
+            document.getElementById('queueTitleTwo').innerText = extra.queueTitleTwo;
+            document.getElementById('queueCopyTwo').innerText = extra.queueCopyTwo;
+            document.getElementById('queueChipTwo').innerText = extra.queueChipTwo;
+            document.getElementById('queueTitleThree').innerText = extra.queueTitleThree;
+            document.getElementById('queueCopyThree').innerText = extra.queueCopyThree;
+            document.getElementById('queueChipThree').innerText = extra.queueChipThree;
+            document.getElementById('miniLabelOne').innerText = extra.miniLabelOne;
+            document.getElementById('miniCopyOne').innerText = extra.miniCopyOne;
+            document.getElementById('miniLabelTwo').innerText = extra.miniLabelTwo;
+            document.getElementById('miniCopyTwo').innerText = extra.miniCopyTwo;
             document.getElementById('statLabelOne').innerText = extra.statLabelOne;
             document.getElementById('statCopyOne').innerText = extra.statCopyOne;
             document.getElementById('statLabelTwo').innerText = extra.statLabelTwo;
@@ -2615,6 +2682,7 @@
             document.getElementById('featureKicker').innerText = extra.featureKicker;
             document.getElementById('featureHeading').innerText = extra.featureHeading;
             document.getElementById('featureCopy').innerText = extra.featureCopy;
+            document.getElementById('sectionSideNote').innerText = extra.sectionSideNote;
             document.getElementById('featureTitleOne').innerText = extra.featureTitleOne;
             document.getElementById('featureTextOne').innerText = extra.featureTextOne;
             document.getElementById('featureLinkOne').innerText = extra.featureLinkOne;

@@ -1,0 +1,40 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+    "recordRequests": {
+      ".read": true,
+      "$recordId": {
+        ".write": "!data.exists() || auth != null",
+        ".validate": "newData.hasChildren(['nickname', 'proof', 'raw', 'levelKey', 'itemType', 'levelName', 'wish', 'percent', 'timestamp', 'status']) && newData.child('nickname').isString() && newData.child('nickname').val().matches(/^[A-Za-z0-9_]{1,24}$/) && newData.child('proof').isString() && newData.child('proof').val().matches(/^https?:\\/\\/.+/) && newData.child('raw').isString() && newData.child('raw').val().matches(/^https?:\\/\\/.+/) && newData.child('levelKey').isString() && newData.child('levelKey').val().length <= 120 && newData.child('itemType').isString() && (newData.child('itemType').val() === 'demon' || newData.child('itemType').val() === 'challenge' || newData.child('itemType').val() === 'impossible') && newData.child('levelName').isString() && newData.child('levelName').val().length > 0 && newData.child('levelName').val().length <= 120 && newData.child('wish').isString() && newData.child('wish').val().length <= 500 && newData.child('percent').isNumber() && newData.child('percent').val() >= 1 && newData.child('percent').val() <= 100 && newData.child('status').isString() && newData.child('status').val() === 'pending' && (newData.child('timestamp').isNumber() || newData.child('timestamp').val() === now)"
+      }
+    },
+    "demons": {
+      ".write": "auth != null"
+    },
+    "challenges": {
+      ".write": "auth != null"
+    },
+    "impossible": {
+      ".write": "auth != null"
+    },
+    "futureDemons": {
+      ".write": "auth != null"
+    },
+    "creators": {
+      ".write": "auth != null"
+    },
+    "players": {
+      ".write": "auth != null"
+    },
+    "changes": {
+      ".write": "auth != null"
+    },
+    "maintenance": {
+      ".write": "auth != null"
+    },
+    "levelVotes": {
+      ".write": "auth != null"
+    }
+  }
+}

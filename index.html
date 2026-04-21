@@ -2140,6 +2140,7 @@
                     <option value="moderate_records">🛡️ Модерация рекордов</option>
                     <option value="edit_level">✏️ Редактировать уровень</option>
                     <option value="manage_votes">🗳️ Управление голосованиями</option>
+                    <option value="move_player_rank">Move player in rankings</option>
                 </select>
             </div>
             <div id="fields_main" class="admin-section">
@@ -2169,6 +2170,17 @@
                 <input type="text" id="vicName" placeholder="Ник игрока">
                 <input type="text" id="vicPerc" placeholder="Проценты">
                 <input type="text" id="vicAtt" placeholder="Попытки">
+            </div>
+
+            <div id="fields_player_rank" class="admin-section" style="display:none;">
+                <div class="admin-section-title">Manual Player Ranking</div>
+                <select id="playerRankSelect" style="width:100%; margin:10px 0;">
+                    <option value="">Select player</option>
+                </select>
+                <input type="number" id="playerRankPosition" placeholder="New position (1 - N)" min="1">
+                <div style="margin-top:8px; color:var(--text-main); font-size:0.9rem;">
+                    Changes only the place in the top, without changing points.
+                </div>
             </div>
 
             <div id="fields_edit" class="admin-section" style="display:none;">
@@ -2887,6 +2899,9 @@
             players = s.val() || {};
             render();
             loadRankings();
+            if (document.getElementById('admAction')?.value === 'move_player_rank') {
+                populatePlayerRankSelect();
+            }
         });
 
         votesRef.on('value', s => {
@@ -3470,6 +3485,7 @@
             document.getElementById('fields_main').style.display = 'block';
             document.getElementById('fields_edit').style.display = 'none';
             document.getElementById('fields_votes').style.display = 'none';
+            document.getElementById('fields_player_rank').style.display = 'none';
             document.getElementById('moderationContainer').style.display = 'none';
         }
 
@@ -3486,6 +3502,40 @@
             return match ? match[1] : url;
         }
 
+        function getOrderedPlayersList(playersData = players) {
+            return Object.entries(playersData || {}).map(([nick, data]) => ({
+                nick,
+                score: Number(data.score) || 0,
+                rankOrder: Number.isFinite(Number(data.rankOrder)) ? Number(data.rankOrder) : null,
+                hardestDemon: data.hardestDemon?.levelName || 'вЂ”',
+                hardestChallenge: data.hardestChallenge?.levelName || 'вЂ”',
+                recordsCount: Object.keys(data.records || {}).length
+            })).sort((a, b) => {
+                const aOrder = a.rankOrder;
+                const bOrder = b.rankOrder;
+                if (aOrder !== null && bOrder !== null && aOrder !== bOrder) return aOrder - bOrder;
+                if (aOrder !== null && bOrder === null) return -1;
+                if (aOrder === null && bOrder !== null) return 1;
+                if (b.score !== a.score) return b.score - a.score;
+                return a.nick.localeCompare(b.nick);
+            });
+        }
+
+        function populatePlayerRankSelect() {
+            const select = document.getElementById('playerRankSelect');
+            if (!select) return;
+            const orderedPlayers = getOrderedPlayersList();
+            select.innerHTML = '<option value="">Select player</option>';
+            orderedPlayers.forEach((player, index) => {
+                select.innerHTML += `<option value="${escapeHtml(player.nick)}">#${index + 1} - ${escapeHtml(player.nick)} (${player.score.toFixed(2)} pts)</option>`;
+            });
+            const positionInput = document.getElementById('playerRankPosition');
+            if (positionInput) {
+                positionInput.max = orderedPlayers.length || 1;
+                positionInput.placeholder = `New position (1 - ${Math.max(orderedPlayers.length, 1)})`;
+            }
+        }
+
         function toggleAdmFields() {
             const a = document.getElementById('admAction').value;
             // Скрыть все блоки
@@ -3494,6 +3544,7 @@
             document.getElementById('moderationContainer').style.display = 'none';
             document.getElementById('fields_main').style.display = 'none';
             document.getElementById('fields_victor').style.display = 'none';
+            document.getElementById('fields_player_rank').style.display = 'none';
 
             if (a === 'add_demon' || a === 'add_challenge' || a === 'add_impossible' || a === 'add_future' || a === 'add_creator') {
                 document.getElementById('fields_main').style.display = 'block';
@@ -3504,6 +3555,9 @@
                 if (estimatedField) estimatedField.style.display = (a === 'add_future') ? 'block' : 'none';
             } else if (a === 'add_victor' || a === 'add_challenge_victor') {
                 document.getElementById('fields_victor').style.display = 'block';
+            } else if (a === 'move_player_rank') {
+                document.getElementById('fields_player_rank').style.display = 'block';
+                populatePlayerRankSelect();
             } else if (a === 'moderate_records') {
                 document.getElementById('moderationContainer').style.display = 'block';
                 loadPendingRecords();
@@ -3667,6 +3721,36 @@
             } else if (act === 'add_creator') {
                 db.ref('creators').push({ name, points: parseInt(val) || 0 });
                 closeAdmin();
+            } else if (act === 'move_player_rank') {
+                const playerNick = document.getElementById('playerRankSelect').value;
+                const positionInput = parseInt(document.getElementById('playerRankPosition').value, 10);
+                const orderedPlayers = getOrderedPlayersList();
+                if (!playerNick) { alert('Select a player'); return; }
+                if (!orderedPlayers.length) { alert('No players in rankings'); return; }
+                if (Number.isNaN(positionInput)) { alert('Enter a new position'); return; }
+
+                const currentIndex = orderedPlayers.findIndex(player => player.nick === playerNick);
+                if (currentIndex === -1) { alert('Player not found'); return; }
+
+                const targetIndex = Math.min(Math.max(positionInput - 1, 0), orderedPlayers.length - 1);
+                if (currentIndex === targetIndex) {
+                    alert('Player is already in this position');
+                    return;
+                }
+
+                const reorderedPlayers = [...orderedPlayers];
+                const [movedPlayer] = reorderedPlayers.splice(currentIndex, 1);
+                reorderedPlayers.splice(targetIndex, 0, movedPlayer);
+
+                const updates = {};
+                reorderedPlayers.forEach((player, index) => {
+                    updates[`players/${player.nick}/rankOrder`] = index;
+                });
+
+                db.ref().update(updates).then(() => {
+                    alert('Player position updated without changing points');
+                    closeAdmin();
+                }).catch(err => alert('РћС€РёР±РєР°: ' + err.message));
             } else if (act === 'add_victor') {
                 const dKey = document.getElementById('selectDemonVictim').value;
                 db.ref(`demons/${dKey}/victors`).push({
@@ -4087,14 +4171,15 @@
             const t = translations[currentLang];
             playersRef.once('value', snapshot => {
                 const playersData = snapshot.val() || {};
-                const playersList = Object.entries(playersData).map(([nick, data]) => ({
+                const playersList = getOrderedPlayersList(playersData);
+                const playersListFallback = Object.entries(playersData).map(([nick, data]) => ({
                     nick,
                     score: data.score || 0,
                     hardestDemon: data.hardestDemon?.levelName || '—',
                     hardestChallenge: data.hardestChallenge?.levelName || '—',
                     recordsCount: Object.keys(data.records || {}).length
                 }));
-                playersList.sort((a, b) => b.score - a.score);
+                playersListFallback.sort((a, b) => b.score - a.score);
                 const tbody = document.getElementById('rankingsBody');
                 const mobileList = document.getElementById('rankingsMobileList');
                 const summary = document.getElementById('rankingsSummary');

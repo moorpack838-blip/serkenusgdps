@@ -1081,23 +1081,88 @@
         }
         .record-modal {
             display: none;
-            background: #12151e;
-            padding: 25px 18px;
-            border-radius: 20px;
+            background:
+                radial-gradient(circle at top right, rgba(102, 252, 241, 0.12), transparent 28%),
+                linear-gradient(180deg, rgba(17, 22, 34, 0.98), rgba(11, 14, 22, 0.98));
+            padding: 28px 22px 22px;
+            border-radius: 24px;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3000;
             width: calc(100% - 28px);
-            max-width: 500px;
-            border: 1px solid var(--accent-cyan);
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            max-width: 620px;
+            max-height: calc(100vh - 28px);
+            overflow-y: auto;
+            border: 1px solid rgba(102,252,241,0.28);
+            box-shadow: 0 28px 80px rgba(0,0,0,0.72);
         }
         .record-modal h2 {
-            margin-top: 0;
-            text-align: center;
+            margin: 0;
+            text-align: left;
             font-family: Montserrat;
+        }
+        .record-modal-subtitle {
+            margin: 10px 0 18px;
+            color: var(--text-main);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .record-modal-section {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .record-modal-section-title {
+            margin: 0 0 12px;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .record-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .record-type-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(20, 24, 34, 0.88);
+            border: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: 0.25s ease;
+            color: #fff;
+            font-weight: 700;
+        }
+        .record-type-option:hover {
+            border-color: rgba(102,252,241,0.36);
+            transform: translateY(-1px);
+        }
+        .record-type-option input {
+            width: auto;
+            margin: 0;
+            accent-color: var(--accent-cyan);
+        }
+        .record-type-option.active {
+            border-color: rgba(102,252,241,0.55);
+            box-shadow: 0 0 0 1px rgba(102,252,241,0.15);
+            background: rgba(102,252,241,0.08);
+        }
+        .record-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .record-form-grid .full-width {
+            grid-column: 1 / -1;
         }
         .record-modal input, .record-modal select, .record-modal textarea {
             width: 100%;
@@ -1119,6 +1184,11 @@
             font-size: 0.85rem;
             margin: 5px 0;
             display: none;
+        }
+        .record-modal-submit {
+            margin-top: 18px !important;
+            min-height: 54px;
+            font-size: 0.9rem;
         }
 
         .moderation-container {
@@ -1736,6 +1806,7 @@
                     <a onclick="openSection('listSection'); switchTab('challenges');">Челлендж лист</a>
                     <a onclick="openSection('listSection'); switchTab('impossible');">Impossible List</a>
                     <a onclick="openSection('listSection'); switchTab('future');">Future Demonlist</a>
+                    <a onclick="openSection('listSection'); switchTab('spam');">Spam Levels List</a>
                 </div>
             </div>
             <button class="nav-item" onclick="openSection('recordsSection')" id="navRecords" data-section="recordsSection">Рекорды</button>
@@ -1781,6 +1852,7 @@
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('challenges'); closeBurger();" style="font-size:0.85rem;">Челлендж лист</button>
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('impossible'); closeBurger();" style="font-size:0.85rem;">Impossible List</button>
                 <button class="m-btn" onclick="openSection('listSection'); switchTab('future'); closeBurger();" style="font-size:0.85rem;">Future Demonlist</button>
+                <button class="m-btn" onclick="openSection('listSection'); switchTab('spam'); closeBurger();" style="font-size:0.85rem;">Spam Levels List</button>
             </div>
         </div>
 
@@ -2130,6 +2202,7 @@
                     <option value="add_challenge">Добавить Челлендж</option>
                     <option value="add_impossible">Добавить Impossible уровень</option>
                     <option value="add_future">Добавить Future Demon</option>
+                    <option value="add_spam">Добавить Spam Level</option>
                     <option value="add_creator">Добавить Креатора</option>
                     <option value="add_victor">Добавить Рекорд Демона</option>
                     <option value="add_challenge_victor">Добавить Рекорд Челленджа</option>
@@ -2190,6 +2263,7 @@
                     <option value="challenge">Челлендж</option>
                     <option value="impossible">Impossible</option>
                     <option value="future">Future</option>
+                    <option value="spam">Spam</option>
                 </select>
                 <select id="editLevelSelect" style="width:100%; margin:10px 0;">
                     <option value="">Выберите уровень</option>
@@ -2253,30 +2327,42 @@
             <i class="fas fa-times"></i>
         </button>
         <h2 id="recordModalTitle">ПОДАТЬ РЕКОРД</h2>
+        <p class="record-modal-subtitle" id="recordModalSubtitle">Выберите тип, уровень и приложите доказательства прохождения. Заявка уйдёт на модерацию.</p>
 
-        <div style="display: flex; gap: 20px; justify-content: center; margin: 10px 0;">
-            <label style="color: var(--accent-cyan);">
-                <input type="radio" name="recordType" value="demon" checked onchange="switchRecordType()"> <span id="radioDemon">Демон</span>
-            </label>
-            <label style="color: var(--accent-cyan);">
-                <input type="radio" name="recordType" value="challenge" onchange="switchRecordType()"> <span id="radioChallenge">Челлендж</span>
-            </label>
-            <label style="color: var(--accent-cyan);">
-                <input type="radio" name="recordType" value="impossible" onchange="switchRecordType()"> <span id="radioImpossible">Impossible</span>
-            </label>
+        <div class="record-modal-section">
+            <div class="record-modal-section-title">Тип рекорда</div>
+            <div class="record-type-grid">
+                <label class="record-type-option active">
+                    <input type="radio" name="recordType" value="demon" checked onchange="switchRecordType()"> <span id="radioDemon">Демон</span>
+                </label>
+                <label class="record-type-option">
+                    <input type="radio" name="recordType" value="challenge" onchange="switchRecordType()"> <span id="radioChallenge">Челлендж</span>
+                </label>
+                <label class="record-type-option">
+                    <input type="radio" name="recordType" value="impossible" onchange="switchRecordType()"> <span id="radioImpossible">Impossible</span>
+                </label>
+                <label class="record-type-option">
+                    <input type="radio" name="recordType" value="spam" onchange="switchRecordType()"> <span id="radioSpam">Spam</span>
+                </label>
+            </div>
         </div>
 
-        <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)" required>
-        <input type="text" id="recordRaw" placeholder="Raw footage (ссылка на Google Drive)" required>
-        <input type="text" id="recordNickname" placeholder="Твой ник (только латиница, цифры, _)" pattern="[a-zA-Z0-9_]+" required>
-        <div id="nicknameError" style="color:#ff6868; font-size:0.85rem; display:none;">Ник может содержать только латиницу, цифры и подчёркивание</div>
-        <select id="recordLevel" required>
-            <option value="">Выберите уровень</option>
-        </select>
-        <textarea id="recordWish" placeholder="Пожелание (необязательно)"></textarea>
-        <input type="number" id="recordPercent" placeholder="Рекорд (проценты, до 100)" min="1" max="100" required>
-        <div id="recordError" class="error-message">Проценты должны быть от 1 до 100</div>
-        <button class="btn-more" style="background:var(--main-grad);color:#0b0c10;margin-top:15px;" onclick="submitRecord()" id="submitRecordBtn">ОТПРАВИТЬ</button>
+        <div class="record-modal-section">
+            <div class="record-modal-section-title">Данные заявки</div>
+            <div class="record-form-grid">
+                <input class="full-width" type="text" id="recordNickname" placeholder="Твой ник (только латиница, цифры, _)" pattern="[a-zA-Z0-9_]+" required>
+                <div id="nicknameError" class="error-message full-width">Ник может содержать только латиницу, цифры и подчёркивание</div>
+                <select class="full-width" id="recordLevel" required>
+                    <option value="">Выберите уровень</option>
+                </select>
+                <input type="number" id="recordPercent" placeholder="Рекорд (проценты, до 100)" min="1" max="100" required>
+                <input type="text" id="recordProof" placeholder="Ссылка на прохождение (YouTube)" required>
+                <div id="recordError" class="error-message full-width">Проценты должны быть от 1 до 100</div>
+                <input class="full-width" type="text" id="recordRaw" placeholder="Raw footage (ссылка на Google Drive)" required>
+                <textarea class="full-width" id="recordWish" placeholder="Пожелание (необязательно)"></textarea>
+            </div>
+        </div>
+        <button class="btn-more record-modal-submit" style="background:var(--main-grad);color:#0b0c10;" onclick="submitRecord()" id="submitRecordBtn">ОТПРАВИТЬ</button>
     </div>
 
     <script>
@@ -2308,6 +2394,7 @@
         let challenges = [];
         let impossibleLevels = [];
         let futureDemons = [];
+        let spamLevels = [];
         let players = {};
 
         const recordsRef = db.ref('recordRequests');
@@ -2355,6 +2442,7 @@
                 challengeList: "СПИСОК ЧЕЛЛЕНДЖЕЙ",
                 impossibleList: "IMPOSSIBLE LIST",
                 futureList: "FUTURE DEMONLIST",
+                spamList: "SPAM LEVELS LIST",
                 creatorTop: "ТОП КРЕАТОРОВ",
                 top50: "TOP 50",
                 impossibleWarning: "⚠️ УРОВНИ НЕ ВЕРИФНУТЫ ИЛИ НЕ ОЦЕНЕНЫ",
@@ -2368,6 +2456,7 @@
                 radioDemon: "Демон",
                 radioChallenge: "Челлендж",
                 radioImpossible: "Impossible",
+                radioSpam: "Спам",
                 recordProof: "Ссылка на прохождение (YouTube)",
                 recordRaw: "Raw footage (ссылка на Google Drive)",
                 recordNickname: "Твой ник (только латиница, цифры, _)",
@@ -2471,6 +2560,7 @@
                 challengeList: "CHALLENGE LIST",
                 impossibleList: "IMPOSSIBLE LIST",
                 futureList: "FUTURE DEMONLIST",
+                spamList: "SPAM LEVELS LIST",
                 creatorTop: "CREATOR TOP",
                 top50: "TOP 50",
                 impossibleWarning: "⚠️ LEVELS NOT VERIFIED OR UNRATED",
@@ -2484,6 +2574,7 @@
                 radioDemon: "Demon",
                 radioChallenge: "Challenge",
                 radioImpossible: "Impossible",
+                radioSpam: "Spam",
                 recordProof: "YouTube Proof Link",
                 recordRaw: "Raw footage (Google Drive link)",
                 recordNickname: "Your nickname (latin, digits, _ only)",
@@ -2752,6 +2843,10 @@
             document.getElementById('radioDemon').innerText = t.radioDemon;
             document.getElementById('radioChallenge').innerText = t.radioChallenge;
             document.getElementById('radioImpossible').innerText = t.radioImpossible;
+            document.getElementById('radioSpam').innerText = t.radioSpam;
+            document.getElementById('recordModalSubtitle').innerText = currentLang === 'RU'
+                ? 'Выберите тип, уровень и приложите доказательства прохождения. Заявка уйдёт на модерацию.'
+                : 'Choose the record type, level, and attach proof links. Your submission will be sent for moderation.';
             document.getElementById('recordProof').placeholder = t.recordProof;
             document.getElementById('recordRaw').placeholder = t.recordRaw;
             document.getElementById('recordNickname').placeholder = t.recordNickname;
@@ -2773,6 +2868,8 @@
                 document.getElementById('txtHero').innerText = t.demonList;
             } else if (currentTab === 'challenges') {
                 document.getElementById('txtHero').innerText = t.challengeList;
+            } else if (currentTab === 'spam') {
+                document.getElementById('txtHero').innerText = t.spamList;
             } else if (currentTab === 'creators') {
                 document.getElementById('txtHero').innerText = t.creatorTop;
             }
@@ -2895,6 +2992,12 @@
             render();
         });
 
+        db.ref('spamLevels').on('value', s => {
+            const val = s.val();
+            spamLevels = val ? Object.entries(val).map(([k, d]) => ({ key: k, ...d })).sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
+            render();
+        });
+
         playersRef.on('value', s => {
             players = s.val() || {};
             render();
@@ -2981,6 +3084,16 @@
                     return (fd.name && fd.name.toLowerCase().includes(query)) || (fd.author && fd.author.toLowerCase().includes(query));
                 });
                 renderCards(filtered, 'future');
+            } else if (currentTab === 'spam') {
+                document.getElementById('txtHero').innerText = t.spamList;
+                topBanner.style.display = 'block';
+                impossibleWarning.style.display = 'none';
+                futureWarning.style.display = 'none';
+                const filtered = spamLevels.filter(sp => {
+                    if (searchMode === 'tag') return sp.tag && sp.tag.toLowerCase().includes(query);
+                    return (sp.name && sp.name.toLowerCase().includes(query)) || (sp.author && sp.author.toLowerCase().includes(query));
+                });
+                renderCards(filtered, 'spam');
             } else if (currentTab === 'creators') {
                 document.getElementById('txtHero').innerText = t.creatorTop;
                 topBanner.style.display = 'none';
@@ -3036,7 +3149,7 @@
                     <div class="admin-controls">
                         <button class="ctrl-btn btn-up" onclick="moveItem('${item.key}', -1, '${type}')"><i class="fas fa-arrow-up"></i></button>
                         <button class="ctrl-btn btn-down" onclick="moveItem('${item.key}', 1, '${type}')"><i class="fas fa-arrow-down"></i></button>
-                        <button class="ctrl-btn btn-del" onclick="deleteItem('${item.key}', '${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : type + 's')}')"><i class="fas fa-trash"></i></button>
+                        <button class="ctrl-btn btn-del" onclick="deleteItem('${item.key}', '${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : (type === 'spam' ? 'spamLevels' : type + 's'))}')"><i class="fas fa-trash"></i></button>
                     </div>` : ''}
                     ${isDragDropMode && isAdmin ? `
                     <div style="position: absolute; top: 10px; left: 10px; background: rgba(102,252,241,0.2); padding:4px 8px; border-radius:5px; font-size:0.7rem; color:var(--accent-cyan); z-index:50;">
@@ -3064,6 +3177,7 @@
             else if (type === 'challenge') items = challenges;
             else if (type === 'impossible') items = impossibleLevels;
             else if (type === 'future') items = futureDemons;
+            else if (type === 'spam') items = spamLevels;
             const index = items.findIndex(i => i.key === levelKey);
             return index === -1 ? Infinity : index + 1;
         }
@@ -3095,6 +3209,7 @@
             else if (type === 'challenge') items = challenges;
             else if (type === 'impossible') items = impossibleLevels;
             else if (type === 'future') items = futureDemons;
+            else if (type === 'spam') items = spamLevels;
             else return;
 
             const oldIndex = draggedIndex;
@@ -3112,7 +3227,7 @@
             const updates = {};
             newItems.forEach((item, idx) => {
                 if (item.order !== idx) {
-                    updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : type + 's')}/${item.key}/order`] = idx;
+                    updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : (type === 'spam' ? 'spamLevels' : type + 's'))}/${item.key}/order`] = idx;
                 }
             });
 
@@ -3136,6 +3251,7 @@
             else if (type === 'challenge') items = challenges;
             else if (type === 'impossible') items = impossibleLevels;
             else if (type === 'future') items = futureDemons;
+            else if (type === 'spam') items = spamLevels;
             else return;
 
             const index = items.findIndex(i => i.key === key);
@@ -3149,8 +3265,8 @@
             const newPos = target + 1;
 
             const updates = {};
-            updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : type + 's')}/${items[index].key}/order`] = target;
-            updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : type + 's')}/${items[target].key}/order`] = index;
+            updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : (type === 'spam' ? 'spamLevels' : type + 's'))}/${items[index].key}/order`] = target;
+            updates[`/${type === 'future' ? 'futureDemons' : (type === 'impossible' ? 'impossible' : (type === 'spam' ? 'spamLevels' : type + 's'))}/${items[target].key}/order`] = index;
             db.ref().update(updates).then(() => {
                 recalculatePlayerScoresForLevel(levelKey, type);
             });
@@ -3172,6 +3288,9 @@
             } else if (path === 'futureDemons') {
                 const item = futureDemons.find(i => i.key === key);
                 if (item) { levelName = item.name; levelKey = item.key; oldPos = futureDemons.findIndex(i => i.key === key) + 1; type = 'future'; }
+            } else if (path === 'spamLevels') {
+                const item = spamLevels.find(i => i.key === key);
+                if (item) { levelName = item.name; levelKey = item.key; oldPos = spamLevels.findIndex(i => i.key === key) + 1; type = 'spam'; }
             }
 
             db.ref(path + '/' + key).remove().then(() => {
@@ -3181,6 +3300,7 @@
                     else if (type === 'challenge') ref = db.ref('challenges');
                     else if (type === 'impossible') ref = db.ref('impossible');
                     else if (type === 'future') ref = db.ref('futureDemons');
+                    else if (type === 'spam') ref = db.ref('spamLevels');
                     ref.once('value', s => {
                         const newItems = s.val() ? Object.entries(s.val()).map(([k, d]) => ({ key: k, ...d })).sort((a,b)=> (a.order||0) - (b.order||0)) : [];
                         logChange('remove', levelName, levelKey, oldPos, null, type, newItems);
@@ -3341,6 +3461,7 @@
             else if (type === 'challenge') item = challenges.find(x => x.key === key);
             else if (type === 'impossible') item = impossibleLevels.find(x => x.key === key);
             else if (type === 'future') item = futureDemons.find(x => x.key === key);
+            else if (type === 'spam') item = spamLevels.find(x => x.key === key);
             if (!item) return;
 
             const t = translations[currentLang];
@@ -3428,6 +3549,7 @@
                 else if (type === 'challenge') path = `challenges/${itemKey}/victors/${victorKey}`;
                 else if (type === 'impossible') path = `impossible/${itemKey}/victors/${victorKey}`;
                 else if (type === 'future') path = `futureDemons/${itemKey}/victors/${victorKey}`;
+                else if (type === 'spam') path = `spamLevels/${itemKey}/victors/${victorKey}`;
                 db.ref(path).remove().then(() => {
                     document.getElementById('detailModal').style.display = 'none';
                 });
@@ -3441,6 +3563,7 @@
             else if (type === 'challenge') items = challenges;
             else if (type === 'impossible') items = impossibleLevels;
             else if (type === 'future') items = futureDemons;
+            else if (type === 'spam') items = spamLevels;
             else return 0;
             const item = items.find(i => i.key === levelKey);
             if (!item) return 0;
@@ -3546,7 +3669,7 @@
             document.getElementById('fields_victor').style.display = 'none';
             document.getElementById('fields_player_rank').style.display = 'none';
 
-            if (a === 'add_demon' || a === 'add_challenge' || a === 'add_impossible' || a === 'add_future' || a === 'add_creator') {
+            if (a === 'add_demon' || a === 'add_challenge' || a === 'add_impossible' || a === 'add_future' || a === 'add_spam' || a === 'add_creator') {
                 document.getElementById('fields_main').style.display = 'block';
                 // Показываем/скрываем поля в зависимости от типа
                 const wrField = document.getElementById('itemWR');
@@ -3601,10 +3724,13 @@
             const select = document.getElementById('editLevelSelect');
             select.innerHTML = '<option value="">Выберите уровень</option>';
             let items = [];
+            if (type === 'spam') items = spamLevels;
             if (type === 'demon') items = demons;
             else if (type === 'challenge') items = challenges;
             else if (type === 'impossible') items = impossibleLevels;
             else if (type === 'future') items = futureDemons;
+            else if (type === 'spam') items = spamLevels;
+            if (type === 'spam') items = spamLevels;
             items.forEach(item => {
                 select.innerHTML += `<option value="${item.key}">${escapeHtml(item.name)} by ${escapeHtml(item.author)}</option>`;
             });
@@ -3623,6 +3749,7 @@
             else if (type === 'challenge') item = challenges.find(c => c.key === key);
             else if (type === 'impossible') item = impossibleLevels.find(i => i.key === key);
             else if (type === 'future') item = futureDemons.find(f => f.key === key);
+            else if (type === 'spam') item = spamLevels.find(s => s.key === key);
             if (item) {
                 document.getElementById('editName').value = item.name || '';
                 document.getElementById('editAuthor').value = item.author || '';
@@ -3649,7 +3776,7 @@
             const name = document.getElementById('itemName').value;
             const val = document.getElementById('itemVal').value;
 
-            if (act === 'add_demon' || act === 'add_challenge' || act === 'add_impossible' || act === 'add_future') {
+            if (act === 'add_demon' || act === 'add_challenge' || act === 'add_impossible' || act === 'add_future' || act === 'add_spam') {
                 let vid = extractVideoId(document.getElementById('itemVid').value);
                 const positionInput = document.getElementById('itemPosition').value;
                 let targetOrder;
@@ -3657,7 +3784,8 @@
                 if (act === 'add_demon') itemsList = demons;
                 else if (act === 'add_challenge') itemsList = challenges;
                 else if (act === 'add_impossible') itemsList = impossibleLevels;
-                else itemsList = futureDemons;
+                else if (act === 'add_future') itemsList = futureDemons;
+                else itemsList = spamLevels;
 
                 if (positionInput && !isNaN(parseInt(positionInput))) {
                     targetOrder = Math.max(0, parseInt(positionInput) - 1);
@@ -3673,7 +3801,8 @@
                         if (act === 'add_demon') path = `demons/${item.key}/order`;
                         else if (act === 'add_challenge') path = `challenges/${item.key}/order`;
                         else if (act === 'add_impossible') path = `impossible/${item.key}/order`;
-                        else path = `futureDemons/${item.key}/order`;
+                        else if (act === 'add_future') path = `futureDemons/${item.key}/order`;
+                        else path = `spamLevels/${item.key}/order`;
                         updates[path] = item.order + 1;
                     }
                 });
@@ -3699,7 +3828,8 @@
                 if (act === 'add_demon') refPath = 'demons';
                 else if (act === 'add_challenge') refPath = 'challenges';
                 else if (act === 'add_impossible') refPath = 'impossible';
-                else refPath = 'futureDemons';
+                else if (act === 'add_future') refPath = 'futureDemons';
+                else refPath = 'spamLevels';
 
                 db.ref().update(updates).then(() => {
                     db.ref(refPath).push(newItem).then((ref) => {
@@ -3711,7 +3841,8 @@
                                 if (act === 'add_demon') listType = 'demon';
                                 else if (act === 'add_challenge') listType = 'challenge';
                                 else if (act === 'add_impossible') listType = 'impossible';
-                                else listType = 'future';
+                                else if (act === 'add_future') listType = 'future';
+                                else listType = 'spam';
                                 logChange('place', name, ref.key, null, newPos, listType, newList);
                             });
                         }, 500);
@@ -3819,6 +3950,7 @@
                 else if (type === 'challenge') { items = challenges; refPath = 'challenges'; }
                 else if (type === 'impossible') { items = impossibleLevels; refPath = 'impossible'; }
                 else if (type === 'future') { items = futureDemons; refPath = 'futureDemons'; }
+                else if (type === 'spam') { items = spamLevels; refPath = 'spamLevels'; }
                 const oldItem = items.find(i => i.key === key);
                 if (!oldItem) return;
                 const oldOrder = oldItem.order;
@@ -4072,6 +4204,7 @@
                         let typeDisplay = '';
                         if (rec.itemType === 'challenge') typeDisplay = t.radioChallenge;
                         else if (rec.itemType === 'impossible') typeDisplay = t.radioImpossible;
+                        else if (rec.itemType === 'spam') typeDisplay = t.radioSpam;
                         else typeDisplay = t.radioDemon;
                         const item = document.createElement('div');
                         item.className = 'moderation-item';
@@ -4109,6 +4242,7 @@
             let path;
             if (type === 'challenge') path = `challenges/${levelKey}/victors`;
             else if (type === 'impossible') path = `impossible/${levelKey}/victors`;
+            else if (type === 'spam') path = `spamLevels/${levelKey}/victors`;
             else path = `demons/${levelKey}/victors`;
 
             db.ref(path).push(victorData)
@@ -4329,6 +4463,7 @@
                                 let typeLabel = '';
                                 if (rec.type === 'challenge') typeLabel = t.radioChallenge;
                                 else if (rec.type === 'impossible') typeLabel = t.radioImpossible;
+                                else if (rec.type === 'spam') typeLabel = t.radioSpam;
                                 else typeLabel = t.radioDemon;
                                 return `
                                 <li>
@@ -4348,7 +4483,15 @@
         function switchRecordType() {
             const type = document.querySelector('input[name="recordType"]:checked').value;
             const select = document.getElementById('recordLevel');
+            document.querySelectorAll('.record-type-option').forEach(option => option.classList.remove('active'));
+            document.querySelector(`input[name="recordType"][value="${type}"]`)?.closest('.record-type-option')?.classList.add('active');
             select.innerHTML = '<option value="">' + translations[currentLang].recordLevel + '</option>';
+            if (type === 'spam') {
+                spamLevels.forEach(item => {
+                    select.innerHTML += `<option value="${item.key}">${escapeHtml(item.name)} by ${escapeHtml(item.author)}</option>`;
+                });
+                return;
+            }
             let items = [];
             if (type === 'demon') items = demons;
             else if (type === 'challenge') items = challenges;
@@ -4364,6 +4507,7 @@
             switchRecordType();
             document.getElementById('recordModal').style.display = 'block';
             document.getElementById('nicknameError').style.display = 'none';
+            document.getElementById('recordError').style.display = 'none';
         }
 
         function closeRecordModal() {
@@ -4373,6 +4517,7 @@
             document.getElementById('recordNickname').value = '';
             document.getElementById('recordWish').value = '';
             document.getElementById('recordPercent').value = '';
+            document.getElementById('nicknameError').style.display = 'none';
             document.getElementById('recordError').style.display = 'none';
         }
 
@@ -4407,6 +4552,7 @@
             if (type === 'demon') levelName = demons.find(d => d.key === levelKey)?.name || 'Неизвестно';
             else if (type === 'challenge') levelName = challenges.find(c => c.key === levelKey)?.name || 'Неизвестно';
             else if (type === 'impossible') levelName = impossibleLevels.find(i => i.key === levelKey)?.name || 'Неизвестно';
+            else if (type === 'spam') levelName = spamLevels.find(s => s.key === levelKey)?.name || 'Неизвестно';
 
             const recordData = {
                 nickname, proof, raw, levelKey, itemType: type,
@@ -4436,6 +4582,7 @@
                     let typeDisplay = '';
                     if (rec.itemType === 'challenge') typeDisplay = t.radioChallenge;
                     else if (rec.itemType === 'impossible') typeDisplay = t.radioImpossible;
+                    else if (rec.itemType === 'spam') typeDisplay = t.radioSpam;
                     else typeDisplay = t.radioDemon;
                     const statusText = rec.status === 'pending' ? t.statusPending : (rec.status === 'approved' ? t.statusApproved : t.statusRejected);
                     const card = document.createElement('div');

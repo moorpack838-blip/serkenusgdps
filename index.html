@@ -2166,7 +2166,7 @@
         <p style="color:var(--text-main);">© 2026 Serkenus GDPS. Developed with passion.</p>
         <div class="footer-links">
             <a href="https://t.me/c/3002600653/115774" id="verifyLink" target="_blank">Критерии верификации</a>
-            <a href="https://t.me/chat_serkenusa/5693" id="demonRulesLink" target="_blank">Правила добавления демона</a>
+            <a href="https://t.me/chat_serkenusa/7233" id="demonRulesLink" target="_blank">Правила добавления демона</a>
         </div>
     </footer>
 
@@ -4328,7 +4328,10 @@
                 const topScore = leader ? leader.score.toFixed(2) : '0.00';
                 const totalPlayers = playersList.length;
                 const totalRuns = playersList.reduce((sum, player) => sum + player.recordsCount, 0);
-                const avgScore = totalPlayers ? (playersList.reduce((sum, player) => sum + player.score, 0) / totalPlayers).toFixed(2) : '0.00';
+                const scoredPlayers = playersList.filter(player => player.recordsCount > 0 || player.score > 0);
+                const avgScore = scoredPlayers.length
+                    ? (scoredPlayers.reduce((sum, player) => sum + player.score, 0) / scoredPlayers.length).toFixed(2)
+                    : '0.00';
 
                 countBadge.textContent = `${totalPlayers} ${totalPlayers === 1 ? 'player' : 'players'}`;
                 summary.innerHTML = `

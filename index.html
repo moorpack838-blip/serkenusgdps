@@ -332,6 +332,31 @@
             gap: 12px;
             margin-top: 22px;
         }
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .quick-link:hover {
+            border-color: rgba(124, 247, 255, 0.28);
+            background: rgba(124, 247, 255, 0.1);
+        }
         .hero-point {
             display: inline-flex;
             align-items: center;
@@ -1704,6 +1729,849 @@
             color: #aaa;
         }
 
+        /* Simpler, calmer UI layer */
+        :root {
+            --bg: #0f172a;
+            --bg-deep: #111827;
+            --card-bg: rgba(15, 23, 42, 0.92);
+            --card-strong: rgba(15, 23, 42, 0.96);
+            --main-grad: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+            --main-grad-soft: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(37, 99, 235, 0.12));
+            --accent-cyan: #38bdf8;
+            --accent-blue: #2563eb;
+            --accent-violet: #2563eb;
+            --accent-gold: #f59e0b;
+            --accent-dark: #0f172a;
+            --text-main: #cbd5e1;
+            --text-soft: #94a3b8;
+            --white-soft: rgba(255,255,255,0.94);
+            --border-soft: rgba(148, 163, 184, 0.18);
+            --shadow-lg: 0 22px 60px rgba(2, 6, 23, 0.18);
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            color: #0f172a;
+        }
+        .bg-wrapper,
+        .grid-overlay,
+        .orb,
+        .hero-content::before,
+        .hero-panel-primary::after,
+        .feature-card::after,
+        .admin-form::before {
+            display: none !important;
+        }
+        .navbar {
+            padding: 14px 4.5%;
+            background: rgba(248, 250, 252, 0.94);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        }
+        .logo {
+            background: none;
+            -webkit-text-fill-color: initial;
+            color: #0f172a;
+            letter-spacing: 0.04em;
+        }
+        .logo:hover {
+            filter: none;
+        }
+        .nav-links {
+            gap: 8px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+        }
+        .nav-item {
+            color: #334155;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            padding: 10px 12px;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #0f172a;
+            background: #e2e8f0;
+            text-shadow: none;
+            box-shadow: none;
+        }
+        .dropdown-content,
+        .mobile-menu,
+        .admin-form,
+        .record-modal,
+        .modal-content {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+        }
+        .dropdown-content a,
+        .mobile-menu-copy,
+        .footer-links a,
+        .record-card p,
+        .changes-date,
+        .player-stat .label,
+        .stat-label,
+        .rank-player-sub,
+        .ranking-summary-copy,
+        .rankings-board-copy,
+        .section-copy,
+        .note-card p,
+        .feature-card p,
+        .stat-copy,
+        .welcome-hero p {
+            color: #475569;
+        }
+        .btn-download-nav,
+        .btn-main,
+        .submit-record-btn,
+        .vote-button,
+        .admin-btn-primary {
+            background: #0f172a;
+            color: #fff !important;
+            box-shadow: none;
+        }
+        .btn-download-nav:hover,
+        .btn-main:hover,
+        .submit-record-btn:hover,
+        .vote-button:hover,
+        .admin-btn-primary:hover {
+            transform: translateY(-1px);
+            filter: none;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+        }
+        .btn-outline,
+        .btn-more,
+        .m-btn,
+        .quick-link,
+        .search-mode-btn,
+        .m-lang {
+            background: #fff;
+            color: #0f172a;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: none;
+        }
+        .btn-outline:hover,
+        .btn-more:hover,
+        .m-btn:hover,
+        .quick-link:hover,
+        .search-mode-btn:hover,
+        .search-mode-btn.active,
+        .m-lang:hover {
+            background: #eff6ff;
+            color: #0f172a;
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: none;
+        }
+        .welcome-hero {
+            min-height: auto;
+            padding: 36px 20px 20px;
+        }
+        .hero-shell {
+            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+            gap: 20px;
+        }
+        .hero-content,
+        .hero-panel,
+        .mini-card,
+        .stat-card,
+        .feature-card,
+        .vote-container,
+        .download-container,
+        .note-card,
+        .card,
+        .record-card,
+        .player-header,
+        .player-records,
+        .changes-item,
+        .ranking-summary-card,
+        .podium-card,
+        .rankings-board,
+        .ranking-mobile-card {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+            backdrop-filter: none;
+        }
+        .welcome-hero h1,
+        .hero-panel h3,
+        .section-heading,
+        .home-video-title,
+        .hero-title h2,
+        .rankings-board-title,
+        .podium-name,
+        .dl-title {
+            color: #0f172a;
+            text-shadow: none;
+            text-transform: none;
+            letter-spacing: 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .welcome-hero h1 {
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            max-width: 10ch;
+            line-height: 1;
+        }
+        .hero-title-accent,
+        .hero-badge,
+        .section-kicker,
+        .panel-kicker,
+        .top-50-text,
+        .warning-text,
+        .ranking-summary-label,
+        .rank-level-label,
+        .mobile-menu-badge,
+        .mini-card-label,
+        .stat-label {
+            color: #2563eb;
+            background: none;
+            -webkit-text-fill-color: initial;
+            text-shadow: none;
+        }
+        .hero-badge,
+        .rankings-board-badge,
+        .queue-chip,
+        .dl-version,
+        .estimated-box,
+        .rank-score,
+        .podium-score,
+        .rank-position-badge,
+        .vote-card-type,
+        .gdps-address {
+            background: #eff6ff;
+            color: #1d4ed8 !important;
+            border: 1px solid rgba(59, 130, 246, 0.16);
+            box-shadow: none;
+        }
+        .hero-badge,
+        .hero-point,
+        .queue-chip,
+        .ranking-summary-label,
+        .top-50-text,
+        .rank-level-label,
+        .mini-card-label,
+        .panel-kicker,
+        .section-kicker {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .hero-point,
+        .queue-item,
+        .podium-meta-item,
+        .ranking-mobile-meta div,
+        .vote-card,
+        .stat-item,
+        .level-id-box,
+        .record-item,
+        .moderation-item,
+        .admin-section {
+            background: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: #0f172a;
+        }
+        .hero-panel p,
+        .mini-card-copy,
+        .queue-label span,
+        .ranking-mobile-meta span,
+        .podium-meta-item span,
+        .vote-total,
+        .changes-text .neighbor {
+            color: #64748b;
+        }
+        .section-intro {
+            align-items: flex-start;
+        }
+        .section-side-note {
+            max-width: 320px;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: #475569;
+        }
+        .home-video-wrapper {
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+        .search-input,
+        .record-modal input,
+        .record-modal select,
+        .record-modal textarea,
+        .admin-form input,
+        .admin-form select {
+            background: #fff;
+            color: #0f172a;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            box-shadow: none;
+        }
+        .search-input:focus,
+        .record-modal input:focus,
+        .record-modal select:focus,
+        .record-modal textarea:focus,
+        .admin-form input:focus,
+        .admin-form select:focus {
+            border-color: rgba(37, 99, 235, 0.42);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+        }
+        .search-icon,
+        .footer-socials a,
+        .nav-socials a,
+        .changes-icon,
+        .feature-icon {
+            color: #2563eb;
+        }
+        .container,
+        .records-container,
+        .rankings-container,
+        .changes-container,
+        .player-profile {
+            max-width: 1120px;
+        }
+        .container {
+            gap: 20px;
+        }
+        .card:hover,
+        .feature-card:hover,
+        .dl-card:hover,
+        .rankings-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(15, 23, 42, 0.1);
+        }
+        .card-img {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+        }
+        .demon-tag {
+            background: #0f172a;
+            color: #fff;
+            box-shadow: none;
+        }
+        .hero-title {
+            padding: 30px 20px 20px;
+        }
+        .hero-title h2 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+        }
+        .top-50-text {
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .warning-text {
+            font-size: 0.92rem;
+            color: #b45309;
+        }
+        .rankings-table th {
+            color: #64748b;
+        }
+        .rankings-table td {
+            background: #fff;
+            color: #0f172a;
+        }
+        .rankings-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+        .rankings-table .clickable,
+        .clickable-level,
+        .feature-link,
+        .record-card a {
+            color: #1d4ed8;
+        }
+        .rankings-table .clickable:hover,
+        .clickable-level:hover,
+        .feature-link:hover,
+        .record-card a:hover {
+            color: #0f172a;
+        }
+        footer {
+            background: rgba(255,255,255,0.86);
+            border-top: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        footer p {
+            color: #475569 !important;
+        }
+        #copyToast {
+            background: #0f172a;
+            color: #fff;
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.16);
+        }
+
+        /* Minimal dark layout inspired by the provided reference */
+        :root {
+            --bg: #121212;
+            --bg-deep: #1a1a1a;
+            --card-bg: #1c1c1c;
+            --card-strong: #202020;
+            --main-grad: linear-gradient(135deg, #1f7a1f 0%, #2ea52e 100%);
+            --main-grad-soft: linear-gradient(135deg, rgba(46, 165, 46, 0.18), rgba(31, 122, 31, 0.18));
+            --accent-cyan: #7dff3a;
+            --accent-blue: #2ea52e;
+            --accent-violet: #2ea52e;
+            --accent-gold: #7dff3a;
+            --accent-dark: #101010;
+            --text-main: #c9c9c9;
+            --text-soft: #909090;
+            --white-soft: rgba(255,255,255,0.95);
+            --border-soft: rgba(255,255,255,0.08);
+            --shadow-lg: none;
+        }
+        body {
+            background: #121212;
+            color: #fff;
+        }
+        .navbar {
+            padding: 14px 18px;
+            background: #242424;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            box-shadow: none;
+        }
+        .logo {
+            color: #fff;
+            font-size: 1.15rem;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+        .nav-item,
+        .dropdown-content a {
+            color: #e7e7e7;
+            font-size: 0.95rem;
+            letter-spacing: 0;
+            text-transform: none;
+            font-weight: 500;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: transparent;
+        }
+        .nav-links {
+            gap: 18px;
+        }
+        .btn-download-nav,
+        .nav-socials,
+        .hero-badge,
+        .hero-points,
+        .hero-side,
+        .hero-stats,
+        .home-panels,
+        .home-video-section,
+        .vote-section,
+        .section-side-note {
+            display: none !important;
+        }
+        .welcome-hero {
+            min-height: calc(100vh - 74px);
+            padding: 32px 18px 40px;
+            justify-content: center;
+        }
+        .hero-shell {
+            width: min(520px, 100%);
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .hero-content {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            text-align: center;
+        }
+        .welcome-hero h1 {
+            max-width: none;
+            font-size: clamp(2.1rem, 7vw, 3.5rem);
+            line-height: 1.1;
+            margin-bottom: 14px;
+            color: #fff;
+        }
+        .hero-title-accent {
+            color: var(--accent-cyan);
+            display: inline;
+            -webkit-text-fill-color: initial;
+        }
+        .welcome-hero p {
+            margin: 0 auto 34px;
+            max-width: 420px;
+            color: #7f7f7f;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .hero-btns,
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+        .hero-btns {
+            margin-bottom: 14px;
+        }
+        .btn-main,
+        .btn-outline,
+        .quick-link {
+            width: 100%;
+            min-height: 58px;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+            padding: 16px 20px;
+            box-shadow: none;
+        }
+        .btn-main,
+        .btn-outline {
+            display: flex;
+            align-items: center;
+        }
+        .btn-main,
+        .quick-link:nth-child(-n+3) {
+            background: #166414;
+            border: 1px solid rgba(72, 255, 72, 0.14);
+            color: #fff !important;
+        }
+        .btn-outline,
+        .quick-link:nth-child(n+4) {
+            background: #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.04);
+            color: #f1f1f1 !important;
+        }
+        .btn-main:hover,
+        .btn-outline:hover,
+        .quick-link:hover {
+            transform: none;
+            filter: none;
+            box-shadow: none;
+            border-color: rgba(255,255,255,0.12);
+        }
+        .quick-link i,
+        .btn-main i,
+        .btn-outline i {
+            display: none;
+        }
+        .section-page {
+            margin-top: 74px;
+        }
+        .download-container,
+        .note-card,
+        .card,
+        .record-card,
+        .player-header,
+        .player-records,
+        .changes-item,
+        .ranking-summary-card,
+        .podium-card,
+        .rankings-board,
+        .ranking-mobile-card,
+        .vote-container,
+        .record-modal,
+        .modal-content,
+        .admin-form,
+        .dropdown-content,
+        .mobile-menu {
+            background: #1b1b1b;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: none;
+        }
+        .hero-title h2,
+        .rankings-board-title,
+        .podium-name,
+        .dl-title,
+        .home-video-title,
+        .section-heading,
+        .hero-panel h3 {
+            color: #fff;
+        }
+        .top-50-text,
+        .warning-text,
+        .ranking-summary-label,
+        .rank-level-label,
+        .mini-card-label,
+        .panel-kicker,
+        .section-kicker,
+        .stat-label,
+        .feature-link,
+        .rankings-table .clickable,
+        .clickable-level,
+        .record-card a {
+            color: var(--accent-cyan);
+        }
+        .search-input,
+        .record-modal input,
+        .record-modal select,
+        .record-modal textarea,
+        .admin-form input,
+        .admin-form select {
+            background: #141414;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .search-input:focus,
+        .record-modal input:focus,
+        .record-modal select:focus,
+        .record-modal textarea:focus,
+        .admin-form input:focus,
+        .admin-form select:focus {
+            border-color: rgba(125, 255, 58, 0.35);
+            box-shadow: none;
+        }
+        .rankings-table td,
+        .hero-point,
+        .queue-item,
+        .podium-meta-item,
+        .ranking-mobile-meta div,
+        .vote-card,
+        .stat-item,
+        .level-id-box,
+        .record-item,
+        .moderation-item,
+        .admin-section {
+            background: #202020;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .rankings-table tbody tr:hover td {
+            background: #252525;
+        }
+        footer {
+            background: #141414;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        footer p,
+        .dropdown-content a,
+        .mobile-menu-copy,
+        .footer-links a,
+        .record-card p,
+        .changes-date,
+        .player-stat .label,
+        .stat-label,
+        .rank-player-sub,
+        .ranking-summary-copy,
+        .rankings-board-copy,
+        .section-copy,
+        .note-card p,
+        .feature-card p,
+        .stat-copy {
+            color: #9a9a9a !important;
+        }
+
+        /* Minimal rankings styling */
+        .rankings-container {
+            max-width: 980px;
+            padding: 12px 18px 24px;
+        }
+        .rankings-summary {
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .ranking-summary-card {
+            border-radius: 14px;
+            padding: 16px;
+            background: #1b1b1b;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .ranking-summary-label {
+            color: #7dff3a;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+        .ranking-summary-value {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            margin-bottom: 6px;
+            color: #fff;
+        }
+        .ranking-summary-copy {
+            color: #8f8f8f !important;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+        .rankings-podium {
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .podium-card {
+            min-height: 0;
+            padding: 16px;
+            border-radius: 14px;
+            background: #1b1b1b;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .podium-card.first,
+        .podium-card.second,
+        .podium-card.third {
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: none;
+        }
+        .podium-rank {
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: #252525;
+            color: #fff;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+        }
+        .podium-card.first .podium-rank,
+        .podium-card.second .podium-rank,
+        .podium-card.third .podium-rank {
+            background: #252525;
+            color: #fff;
+        }
+        .podium-name {
+            margin: 14px 0 8px;
+            font-family: 'Sora', sans-serif;
+            font-size: 1.1rem;
+        }
+        .podium-score {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #166414;
+            color: #fff !important;
+            border: 1px solid rgba(125,255,58,0.12);
+        }
+        .podium-meta {
+            gap: 8px;
+        }
+        .podium-meta-item {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #202020;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .podium-meta-item span {
+            color: #7dff3a;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+        .podium-meta-item strong {
+            color: #f1f1f1;
+            font-size: 0.9rem;
+        }
+        .rankings-board {
+            padding: 14px;
+            border-radius: 14px;
+            background: #1b1b1b;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .rankings-board-head {
+            margin-bottom: 10px;
+        }
+        .rankings-board-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.05rem;
+        }
+        .rankings-board-copy {
+            color: #909090 !important;
+            font-size: 0.86rem;
+        }
+        .rankings-board-badge {
+            background: #252525;
+            color: #7dff3a !important;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 7px 10px;
+            letter-spacing: 0.04em;
+        }
+        .rankings-table {
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+        .rankings-table th {
+            padding: 0 10px 10px;
+            color: #8f8f8f;
+            font-size: 0.74rem;
+            letter-spacing: 0.04em;
+        }
+        .rankings-table td {
+            padding: 14px 10px;
+            background: #202020;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #f3f3f3;
+        }
+        .rankings-table tbody tr td:first-child,
+        .rankings-table tbody tr td:last-child {
+            border-radius: 0;
+        }
+        .rankings-table tbody tr:hover {
+            transform: none;
+        }
+        .rankings-table tbody tr:hover td {
+            background: #252525;
+        }
+        .rank-position-badge {
+            min-width: 44px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+        .rank-position-badge.top-1,
+        .rank-position-badge.top-2,
+        .rank-position-badge.top-3 {
+            background: #166414;
+            color: #fff !important;
+        }
+        .rank-player-name {
+            font-size: 0.98rem;
+            color: #fff;
+        }
+        .rankings-table .clickable.rank-player-name,
+        .rankings-table .clickable.rank-player-name:hover,
+        .ranking-mobile-name .clickable,
+        .ranking-mobile-name .clickable:hover {
+            color: #fff !important;
+        }
+        .rank-player-sub {
+            color: #8f8f8f !important;
+            font-size: 0.78rem;
+        }
+        .rank-score {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #166414;
+            color: #fff !important;
+            gap: 6px;
+        }
+        .rank-level-label {
+            color: #7dff3a;
+            font-size: 0.68rem;
+            letter-spacing: 0.04em;
+        }
+        .rank-level-value {
+            color: #f1f1f1;
+            font-size: 0.9rem;
+        }
+        .ranking-mobile-card {
+            padding: 14px;
+            border-radius: 14px;
+            background: #1b1b1b;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .ranking-mobile-top {
+            margin-bottom: 10px;
+        }
+        .ranking-mobile-name {
+            color: #fff;
+            font-size: 1rem;
+        }
+        .ranking-mobile-meta {
+            gap: 8px;
+        }
+        .ranking-mobile-meta div {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #202020;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .ranking-mobile-meta span {
+            color: #7dff3a;
+            letter-spacing: 0.04em;
+        }
+
         @media (max-width: 768px) {
             .navbar { padding: 0 14px; height: 60px; flex-wrap: nowrap; }
             .logo { font-size: 1.2rem; }
@@ -1721,6 +2589,7 @@
             .btn-main, .btn-outline { padding: 14px 22px; font-size: 0.82rem; flex: 1; min-width: 125px; max-width: none; }
             .hero-points { gap: 10px; }
             .hero-point { width: 100%; justify-content: center; }
+            .quick-links { grid-template-columns: 1fr 1fr; }
             .hero-mini-grid { grid-template-columns: 1fr; }
             .hero-stats, .feature-grid, .download-notes { grid-template-columns: 1fr; }
             .home-panels { padding: 0 14px; margin-bottom: 48px; }
@@ -1896,6 +2765,11 @@
                         <div class="hero-point" id="heroPointOne"><i class="fas fa-satellite-dish"></i> Live rankings and updates</div>
                         <div class="hero-point" id="heroPointTwo"><i class="fas fa-layer-group"></i> Clean access to every list</div>
                         <div class="hero-point" id="heroPointThree"><i class="fas fa-gamepad"></i> Download and play in minutes</div>
+                    </div>
+                    <div class="quick-links">
+                        <button class="quick-link" onclick="openSection('downloadSection')"><i class="fas fa-download"></i> Download</button>
+                        <button class="quick-link" onclick="openSection('recordsSection')"><i class="fas fa-trophy"></i> Records</button>
+                        <button class="quick-link" onclick="openSection('rankingsSection')"><i class="fas fa-chart-line"></i> Rankings</button>
                     </div>
                 </div>
 
